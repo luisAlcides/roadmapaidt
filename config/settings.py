@@ -1,19 +1,34 @@
 """
-Settings del proyecto. Pensado para correr en local con SQLite y en Railway
-con Postgres, sin cambiar nada más que variables de entorno.
+Settings del proyecto. Corre sobre PostgreSQL tanto en local como en Railway;
+lo único que cambia entre los dos entornos son las variables de entorno.
 """
 
 import os
 from pathlib import Path
 
 import dj_database_url
+from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# En local lee el .env; en Railway las variables ya vienen del entorno.
+load_dotenv(BASE_DIR / ".env")
 
-SECRET_KEY = os.environ.get(
-    "SECRET_KEY", "django-insecure-solo-para-desarrollo-local-cambiar-en-railway"
-)
+
+def requerido(nombre):
+    """Variable de entorno obligatoria: mejor fallar claro que arrancar roto."""
+    valor = os.environ.get(nombre)
+    if not valor:
+        raise ImproperlyConfigured(
+            f"Falta la variable de entorno {nombre}. "
+            "En local, cópiala en el archivo .env (ver .env.example). "
+            "En Railway, defínela en Variables del servicio."
+        )
+    return valor
+
+
+SECRET_KEY = requerido("SECRET_KEY")
 
 DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
 
@@ -68,13 +83,21 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 
+# PostgreSQL siempre. En Railway, DATABASE_URL la inyecta el servicio de Postgres
+# al enlazarlo; en local sale del .env.
 DATABASES = {
-    "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+    "default": dj_database_url.parse(
+        requerido("DATABASE_URL"),
         conn_max_age=600,
         conn_health_checks=True,
     )
 }
+
+if not DATABASES["default"]["ENGINE"].endswith(("postgresql", "postgresql_psycopg2")):
+    raise ImproperlyConfigured(
+        "DATABASE_URL debe apuntar a PostgreSQL "
+        "(postgresql://usuario:clave@host:puerto/base)."
+    )
 
 
 AUTH_PASSWORD_VALIDATORS = [

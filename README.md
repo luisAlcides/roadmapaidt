@@ -17,7 +17,20 @@ que falte.
 
 ## Correr en local
 
+Corre sobre PostgreSQL, igual que en producción. Necesitas un Postgres andando.
+
 ```bash
+# 1. Base de datos (una sola vez)
+sudo -u postgres psql \
+  -c "CREATE ROLE roadmap LOGIN PASSWORD 'roadmap_local';" \
+  -c "CREATE DATABASE roadmap OWNER roadmap;"
+
+# 2. Configuración
+cp .env.example .env
+python -c "from django.core.management.utils import get_random_secret_key as k; print(k())"
+# pega esa clave en SECRET_KEY dentro de .env
+
+# 3. App
 source env/bin/activate
 pip install -r requirements.txt
 python manage.py migrate
@@ -25,7 +38,10 @@ python manage.py cargar_roadmap     # carga el contenido del PDF
 python manage.py runserver
 ```
 
-Queda en http://127.0.0.1:8000/. Sin `DATABASE_URL` usa SQLite.
+Queda en http://127.0.0.1:8000/.
+
+`SECRET_KEY` y `DATABASE_URL` son obligatorias: si falta alguna, la app no
+arranca y dice cuál. El `.env` lo lee python-dotenv y está en `.gitignore`.
 
 Para entrar al admin: `python manage.py createsuperuser`.
 
@@ -40,7 +56,7 @@ borra todo y vuelve a empezar de cero — ahí sí pierdes el progreso.
 1. Sube el repo a GitHub.
 2. En Railway: **New Project → Deploy from GitHub repo** y elige este repo.
 3. En el mismo proyecto: **New → Database → Add PostgreSQL**. Railway inyecta
-   `DATABASE_URL` automáticamente en el servicio web.
+   `DATABASE_URL` automáticamente en el servicio web — no la definas a mano.
 4. En el servicio web, pestaña **Variables**, agrega:
 
    | Variable | Valor |
