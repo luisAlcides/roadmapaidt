@@ -86,9 +86,18 @@ y en `immi.homeaffairs.gov.au`.
    ```
 5. En **Settings → Networking**, pulsa **Generate Domain**.
 
-El `Procfile` corre `migrate` y `cargar_roadmap` en cada release, así que la
-primera vez la base queda poblada sola. `railway.json` define el build
-(`collectstatic`), el arranque con gunicorn y el healthcheck en `/`.
+Las migraciones y la carga de contenido corren **al arrancar el servicio**, no
+en el build: durante el build la red privada de Railway todavía no resuelve
+`postgres.railway.internal`. El arranque completo es:
+
+```
+esperar_db → migrate → cargar_roadmap → cargar_extras → gunicorn
+```
+
+Todo eso es idempotente, así que se repite sin daño en cada deploy y la primera
+vez deja la base poblada sola. `railway.json` define el build
+(`collectstatic`, lo único que sí necesita estar en build), el start command y
+el healthcheck en `/`.
 
 Los estáticos los sirve WhiteNoise, así que no hace falta S3 ni CDN.
 
@@ -101,6 +110,17 @@ equivocado (tiene que ir en el web, no en el de Postgres). Va sin comillas.
 **`Falta la variable de entorno DATABASE_URL`**
 El servicio de Postgres no está enlazado al web. Agrégalo desde el mismo
 proyecto con **New → Database → Add PostgreSQL**; Railway la inyecta sola.
+
+**`failed to resolve host 'postgres.railway.internal'`**
+Algo está intentando hablar con la base **durante el build**, donde la red
+privada de Railway no existe todavía. Revisa en **Settings → Build** que el
+*Custom Build Command* no incluya `migrate` — lo que la UI de Railway tenga
+configurado tiene precedencia sobre `railway.json`. Las migraciones van en el
+start command, no en el build.
+
+Si aparece al arrancar y no en el build, suele ser que el Postgres está en otro
+proyecto o en otro environment: la red privada solo conecta servicios del mismo
+environment.
 
 **`password authentication failed`**
 Pasa en local, no en Railway: el rol de Postgres no existe todavía o la clave
