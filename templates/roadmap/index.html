@@ -1,0 +1,411 @@
+{% load roadmap_extras %}<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roadmap · De mantenimiento a ingeniería de datos e IA</title>
+<style>
+  :root {
+    --bg: #faf7f2;
+    --bg-alt: #ffffff;
+    --tinta: #1c2b3a;
+    --tinta-suave: #5a6b7c;
+    --tenue: #8a97a4;
+    --linea: #e4ddd2;
+    --acento: #c2703d;
+    --ok: #4f8a5b;
+    --sombra: 0 1px 2px rgba(28,43,58,.05), 0 8px 24px rgba(28,43,58,.06);
+    --radio: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14181d;
+      --bg-alt: #1b2027;
+      --tinta: #e8eaed;
+      --tinta-suave: #a8b3be;
+      --tenue: #6d7883;
+      --linea: #2b323b;
+      --sombra: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--tinta);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+
+  /* ---------- Barra superior ---------- */
+  .barra {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid var(--linea);
+  }
+  .barra-int {
+    max-width: 960px; margin: 0 auto; padding: 12px 24px;
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  }
+  .barra-marca { font-weight: 700; letter-spacing: -.01em; margin-right: auto; }
+  .barra-marca small {
+    display: block; font-weight: 500; font-size: 12px; color: var(--tenue);
+    letter-spacing: .04em; text-transform: uppercase;
+  }
+  .barra-prog { flex: 1 1 220px; min-width: 160px; }
+  .barra-prog-cifras {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--tinta-suave); margin-bottom: 5px;
+    font-variant-numeric: tabular-nums;
+  }
+  .medidor { height: 7px; border-radius: 99px; background: var(--linea); overflow: hidden; }
+  .medidor > i {
+    display: block; height: 100%; border-radius: 99px;
+    background: linear-gradient(90deg, var(--acento), #e0a06a);
+    transition: width .45s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ---------- Portada ---------- */
+  .portada { max-width: 960px; margin: 0 auto; padding: 64px 24px 40px; }
+  .kicker {
+    font-size: 12px; font-weight: 700; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--acento); margin-bottom: 14px;
+  }
+  .portada h1 {
+    font-size: clamp(30px, 5.5vw, 46px); line-height: 1.12;
+    letter-spacing: -.025em; margin: 0 0 14px; font-weight: 700; max-width: 22ch;
+  }
+  .portada p.lead { font-size: 18px; color: var(--tinta-suave); max-width: 62ch; margin: 0; }
+  .fichas { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+  .ficha {
+    background: var(--bg-alt); border: 1px solid var(--linea);
+    border-radius: 11px; padding: 12px 16px; min-width: 108px;
+  }
+  .ficha b { display: block; font-size: 22px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .ficha span { font-size: 11.5px; color: var(--tenue); text-transform: uppercase; letter-spacing: .07em; }
+
+  /* ---------- Mapa de niveles ---------- */
+  .mapa { max-width: 960px; margin: 0 auto; padding: 0 24px 100px; position: relative; }
+  .nivel { position: relative; padding-left: 74px; padding-bottom: 40px; }
+  /* Línea que conecta los niveles */
+  .nivel::before {
+    content: ""; position: absolute; left: 25px; top: 8px; bottom: -8px;
+    width: 2px; background: var(--linea); border-radius: 2px;
+  }
+  .nivel:last-child::before { bottom: auto; height: 44px; }
+  .nivel.hecha::before { background: linear-gradient(180deg, var(--nivel-color), var(--linea)); }
+
+  .nodo {
+    position: absolute; left: 0; top: 0; width: 52px; height: 52px;
+    border-radius: 50%; display: grid; place-items: center;
+    background: var(--bg-alt); border: 2px solid var(--linea);
+    font-weight: 700; font-size: 19px; color: var(--tenue);
+    transition: all .3s ease; z-index: 2;
+  }
+  .nivel.activa .nodo { border-color: var(--nivel-color); color: var(--nivel-color); }
+  .nivel.hecha .nodo {
+    background: var(--nivel-color); border-color: var(--nivel-color); color: #fff;
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--nivel-color) 16%, transparent);
+  }
+  .nodo .marca { font-size: 24px; line-height: 1; }
+
+  /* ---------- Tarjeta de etapa ---------- */
+  .tarjeta {
+    background: var(--bg-alt); border: 1px solid var(--linea);
+    border-radius: var(--radio); box-shadow: var(--sombra); overflow: hidden;
+  }
+  .tarjeta-cab { padding: 22px 26px 20px; border-bottom: 1px solid var(--linea); }
+  .tarjeta-cab .kicker { color: var(--nivel-color); margin-bottom: 8px; }
+  .tarjeta-cab h2 { margin: 0 0 6px; font-size: 25px; letter-spacing: -.02em; }
+  .meta { font-size: 13.5px; color: var(--tenue); display: flex; gap: 8px; flex-wrap: wrap; }
+  .meta span:not(:last-child)::after { content: " ·"; }
+  .objetivo {
+    margin: 14px 0 0; font-style: italic; color: var(--tinta-suave);
+    font-size: 15px; max-width: 68ch;
+  }
+  .prog-etapa { display: flex; align-items: center; gap: 12px; margin-top: 18px; }
+  .prog-etapa .medidor { flex: 1; }
+  .prog-etapa .medidor > i { background: var(--nivel-color); }
+  .prog-etapa b { font-size: 13px; color: var(--tinta-suave); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* ---------- Items ---------- */
+  .grupo-tit {
+    font-size: 11px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase;
+    color: var(--tenue); padding: 20px 26px 6px;
+  }
+  .item {
+    display: flex; gap: 13px; padding: 11px 26px; align-items: flex-start;
+    border-top: 1px solid color-mix(in srgb, var(--linea) 55%, transparent);
+    transition: background .15s;
+  }
+  .item:hover { background: color-mix(in srgb, var(--nivel-color) 4%, transparent); }
+  .item:hover .borrar { opacity: 1; }
+  .grupo-tit + .item { border-top: 0; }
+
+  .caja {
+    flex: none; width: 21px; height: 21px; margin-top: 2px; border-radius: 6px;
+    border: 2px solid var(--linea); background: transparent; cursor: pointer;
+    display: grid; place-items: center; padding: 0; transition: all .18s;
+  }
+  .caja:hover { border-color: var(--nivel-color); transform: scale(1.08); }
+  .caja svg { width: 12px; height: 12px; stroke: #fff; stroke-width: 3.2;
+    fill: none; stroke-linecap: round; stroke-linejoin: round;
+    opacity: 0; transform: scale(.4); transition: all .18s; }
+  .item.ok .caja { background: var(--nivel-color); border-color: var(--nivel-color); }
+  .item.ok .caja svg { opacity: 1; transform: scale(1); }
+
+  .cuerpo { flex: 1; min-width: 0; }
+  .titulo { font-weight: 600; font-size: 15.5px; letter-spacing: -.005em; }
+  .item.ok .titulo { text-decoration: line-through; text-decoration-thickness: 1.5px; color: var(--tenue); }
+  .item.ok .fuente, .item.ok .detalle { opacity: .55; }
+  .fuente { color: var(--nivel-color); font-weight: 500; font-size: 14px; }
+  .detalle { color: var(--tinta-suave); font-size: 14px; margin-top: 3px; }
+  .etiqueta {
+    display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .09em;
+    text-transform: uppercase; color: var(--tenue); border: 1px solid var(--linea);
+    border-radius: 5px; padding: 1px 6px; margin-right: 7px; vertical-align: 2px;
+  }
+  .en { background: var(--tinta); color: var(--bg-alt); border-color: var(--tinta); }
+
+  .item.entregable { background: color-mix(in srgb, var(--nivel-color) 7%, transparent); }
+  .item.entregable .titulo::before { content: "◆ "; color: var(--nivel-color); }
+  .item.nota { background: color-mix(in srgb, #d9a441 10%, transparent); }
+
+  .borrar {
+    flex: none; opacity: 0; background: none; border: 0; cursor: pointer;
+    color: var(--tenue); font-size: 17px; line-height: 1; padding: 3px 5px;
+    border-radius: 6px; transition: all .15s;
+  }
+  .borrar:hover { color: #c0392b; background: color-mix(in srgb, #c0392b 12%, transparent); }
+
+  /* ---------- Formularios ---------- */
+  details.agregar { border-top: 1px solid var(--linea); }
+  details.agregar > summary {
+    padding: 13px 26px; cursor: pointer; font-size: 14px; font-weight: 600;
+    color: var(--tinta-suave); list-style: none; user-select: none;
+  }
+  details.agregar > summary::-webkit-details-marker { display: none; }
+  details.agregar > summary::before { content: "+ "; color: var(--nivel-color); font-weight: 700; }
+  details.agregar > summary:hover { color: var(--nivel-color); }
+  details.agregar[open] > summary { color: var(--nivel-color); }
+
+  form.nuevo { padding: 4px 26px 22px; display: grid; gap: 9px; grid-template-columns: 1fr 1fr; }
+  form.nuevo .ancho { grid-column: 1 / -1; }
+  input[type=text], select, textarea {
+    width: 100%; font: inherit; font-size: 14.5px; padding: 9px 12px;
+    border: 1px solid var(--linea); border-radius: 9px;
+    background: var(--bg); color: var(--tinta);
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: 2px solid color-mix(in srgb, var(--nivel-color, var(--acento)) 45%, transparent);
+    outline-offset: -1px; border-color: transparent;
+  }
+  textarea { resize: vertical; min-height: 60px; }
+  button.enviar {
+    justify-self: start; grid-column: 1 / -1;
+    font: inherit; font-size: 14.5px; font-weight: 600; cursor: pointer;
+    padding: 9px 22px; border-radius: 9px; border: 0;
+    background: var(--nivel-color, var(--acento)); color: #fff;
+    transition: filter .15s;
+  }
+  button.enviar:hover { filter: brightness(1.08); }
+
+  /* Nueva etapa */
+  .nueva-etapa { padding-left: 74px; position: relative; }
+  .nueva-etapa .nodo { border-style: dashed; font-size: 26px; font-weight: 400; }
+  .nueva-etapa details.agregar { border: 1px dashed var(--linea); border-radius: var(--radio); }
+
+  .pie {
+    max-width: 960px; margin: 0 auto; padding: 0 24px 60px;
+    color: var(--tenue); font-size: 13.5px; text-align: center;
+  }
+
+  @media (max-width: 620px) {
+    .nivel, .nueva-etapa { padding-left: 0; }
+    .nivel::before { display: none; }
+    .nodo { position: static; margin-bottom: 14px; }
+    .tarjeta-cab, .item, .grupo-tit, form.nuevo, details.agregar > summary { padding-left: 18px; padding-right: 18px; }
+    form.nuevo { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="barra">
+  <div class="barra-int">
+    <div class="barra-marca">
+      Roadmap
+      <small>Data &amp; IA · Alcides</small>
+    </div>
+    <div class="barra-prog">
+      <div class="barra-prog-cifras">
+        <span><b id="g-hechos">{{ hechos }}</b> de <span id="g-total">{{ total }}</span> completados</span>
+        <span id="g-pct">{{ porcentaje }} %</span>
+      </div>
+      <div class="medidor"><i id="g-barra" style="width: {{ porcentaje }}%"></i></div>
+    </div>
+  </div>
+</header>
+
+<section class="portada">
+  <p class="kicker">Plan de formación · 15–18 meses</p>
+  <h1>De ingeniero de mantenimiento a ingeniero de datos e IA</h1>
+  <p class="lead">
+    Ruta con Platzi y Udemy hacia el mantenimiento predictivo en minería.
+    40 % ingeniería de datos, 40 % ciencia de datos, 20 % AI engineering.
+    Ve tachando lo que avanzas y agrega lo que falte.
+  </p>
+  <div class="fichas">
+    <div class="ficha"><b>{{ etapas|length }}</b><span>Niveles</span></div>
+    <div class="ficha"><b>{{ hechos }}/{{ total }}</b><span>Items</span></div>
+    <div class="ficha"><b>{{ libros_hechos }}/{{ libros_total }}</b><span>Libros</span></div>
+    <div class="ficha"><b>{{ porcentaje }} %</b><span>Progreso</span></div>
+  </div>
+</section>
+
+<main class="mapa">
+  {% for etapa in etapas %}
+  <section class="nivel {% if etapa.completa %}hecha{% elif etapa.hechos %}activa{% endif %}"
+           id="etapa-{{ etapa.pk }}" data-etapa="{{ etapa.pk }}"
+           style="--nivel-color: {{ etapa.color }}">
+
+    <div class="nodo">
+      <span class="numero">{{ etapa.orden }}</span>
+      <span class="marca" hidden>✓</span>
+    </div>
+
+    <article class="tarjeta">
+      <div class="tarjeta-cab">
+        {% if etapa.kicker %}<p class="kicker">{{ etapa.kicker }}</p>{% endif %}
+        <h2>{{ etapa.titulo }}</h2>
+        <div class="meta">
+          {% if etapa.duracion %}<span>{{ etapa.duracion }}</span>{% endif %}
+          {% if etapa.horas %}<span>{{ etapa.horas }}</span>{% endif %}
+          {% if etapa.subtitulo %}<span>{{ etapa.subtitulo }}</span>{% endif %}
+        </div>
+        {% if etapa.objetivo %}<p class="objetivo">{{ etapa.objetivo }}</p>{% endif %}
+        <div class="prog-etapa">
+          <div class="medidor"><i class="e-barra" style="width: {{ etapa.porcentaje }}%"></i></div>
+          <b><span class="e-hechos">{{ etapa.hechos }}</span>/<span class="e-total">{{ etapa.total }}</span></b>
+        </div>
+      </div>
+
+      {% regroup etapa.items.all by tipo as grupos %}
+      {% for grupo in grupos %}
+        <p class="grupo-tit">{{ grupo.list.0.get_tipo_display|titulo_grupo }}</p>
+        {% for item in grupo.list %}
+        <div class="item {{ item.tipo }} {% if item.completado %}ok{% endif %}" data-item="{{ item.pk }}">
+          <button class="caja" type="button" aria-label="Marcar «{{ item.titulo }}»"
+                  aria-pressed="{{ item.completado|yesno:'true,false' }}">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+          <div class="cuerpo">
+            <div class="titulo">
+              {% if item.etiqueta %}<span class="etiqueta">{{ item.etiqueta }}</span>{% endif %}
+              {{ item.titulo }}
+              {% if item.fuente %}<span class="fuente">— {{ item.fuente }}</span>{% endif %}
+              {% if item.en_ingles %}<span class="etiqueta en">En inglés</span>{% endif %}
+            </div>
+            {% if item.detalle %}<p class="detalle">{{ item.detalle }}</p>{% endif %}
+          </div>
+          <form method="post" action="{% url 'borrar_item' item.pk %}"
+                onsubmit="return confirm('¿Borrar «{{ item.titulo|escapejs }}»?')">
+            {% csrf_token %}
+            <button class="borrar" type="submit" aria-label="Borrar item">×</button>
+          </form>
+        </div>
+        {% endfor %}
+      {% endfor %}
+
+      <details class="agregar">
+        <summary>Agregar algo a esta etapa</summary>
+        <form class="nuevo" method="post" action="{% url 'crear_item' etapa.pk %}">
+          {% csrf_token %}
+          <input class="ancho" type="text" name="titulo" placeholder="Título — curso, libro, entregable…" required>
+          <select name="tipo">
+            {% for valor, nombre in tipos %}<option value="{{ valor }}">{{ nombre }}</option>{% endfor %}
+          </select>
+          <input type="text" name="fuente" placeholder="Platzi, Udemy, autor…">
+          <textarea class="ancho" name="detalle" placeholder="Nota o detalle (opcional)"></textarea>
+          <button class="enviar" type="submit">Agregar</button>
+        </form>
+      </details>
+    </article>
+  </section>
+  {% empty %}
+  <p style="color: var(--tinta-suave)">
+    Todavía no hay etapas. Corre <code>python manage.py cargar_roadmap</code> para cargar el plan del PDF.
+  </p>
+  {% endfor %}
+
+  <section class="nueva-etapa">
+    <div class="nodo">+</div>
+    <details class="agregar">
+      <summary>Crear una etapa nueva</summary>
+      <form class="nuevo" method="post" action="{% url 'crear_etapa' %}">
+        {% csrf_token %}
+        <input class="ancho" type="text" name="titulo" placeholder="Nombre de la etapa" required>
+        <input type="text" name="kicker" placeholder="Etiqueta (ej. Etapa 5)">
+        <input type="text" name="duracion" placeholder="Duración (ej. 2 meses)">
+        <textarea class="ancho" name="objetivo" placeholder="Objetivo de la etapa (opcional)"></textarea>
+        <button class="enviar" type="submit">Crear etapa</button>
+      </form>
+    </details>
+  </section>
+</main>
+
+<p class="pie">
+  Veinte libros en quince meses son menos de uno y medio al mes.<br>
+  Si hay que sacrificar algo, sacrifica un curso antes que un libro.
+</p>
+
+<script>
+const csrf = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+document.querySelectorAll('.caja').forEach(caja => {
+  caja.addEventListener('click', async () => {
+    const item = caja.closest('.item');
+    const nivel = caja.closest('.nivel');
+
+    // Optimista: la interfaz responde antes que el servidor.
+    item.classList.toggle('ok');
+
+    try {
+      const res = await fetch(`/item/${item.dataset.item}/alternar/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': csrf, 'X-Requested-With': 'fetch'},
+      });
+      if (!res.ok) throw new Error(res.status);
+      const d = await res.json();
+
+      item.classList.toggle('ok', d.completado);
+      caja.setAttribute('aria-pressed', d.completado);
+
+      nivel.querySelector('.e-barra').style.width = d.etapa_porcentaje + '%';
+      nivel.querySelector('.e-hechos').textContent = d.etapa_hechos;
+      nivel.classList.toggle('hecha', d.etapa_completa);
+      nivel.classList.toggle('activa', !d.etapa_completa && d.etapa_hechos > 0);
+      nivel.querySelector('.numero').hidden = d.etapa_completa;
+      nivel.querySelector('.marca').hidden = !d.etapa_completa;
+
+      document.getElementById('g-hechos').textContent = d.global_hechos;
+      document.getElementById('g-pct').textContent = d.global_porcentaje + ' %';
+      document.getElementById('g-barra').style.width = d.global_porcentaje + '%';
+    } catch (e) {
+      item.classList.toggle('ok');  // revertir si el servidor falló
+      console.error('No se pudo guardar el cambio:', e);
+    }
+  });
+});
+
+// Estado inicial del ✓ en los nodos ya completos.
+document.querySelectorAll('.nivel.hecha').forEach(n => {
+  n.querySelector('.numero').hidden = true;
+  n.querySelector('.marca').hidden = false;
+});
+</script>
+</body>
+</html>
