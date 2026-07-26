@@ -108,3 +108,47 @@ class CargarRoadmapTests(TestCase):
 
         self.assertEqual(Item.objects.count(), 65)
         self.assertEqual(Item.objects.filter(completado=True).count(), 0)
+
+
+class CargarExtrasTests(TestCase):
+    def setUp(self):
+        call_command("cargar_roadmap", verbosity=0)
+
+    def test_agrega_contenido_y_lo_marca_como_generado(self):
+        call_command("cargar_extras", verbosity=0)
+
+        generados = Item.objects.filter(generado=True)
+        self.assertEqual(generados.count(), Item.objects.count() - 65)
+        self.assertEqual(Etapa.objects.count(), 7)
+        # Lo del PDF queda intacto.
+        self.assertEqual(Item.objects.filter(generado=False).count(), 65)
+
+    def test_es_idempotente(self):
+        call_command("cargar_extras", verbosity=0)
+        total = Item.objects.count()
+
+        call_command("cargar_extras", verbosity=0)
+
+        self.assertEqual(Item.objects.count(), total)
+
+    def test_quitar_deja_solo_el_pdf(self):
+        call_command("cargar_extras", verbosity=0)
+        call_command("cargar_extras", "--quitar", verbosity=0)
+
+        self.assertEqual(Item.objects.count(), 65)
+        self.assertEqual(Etapa.objects.count(), 5)
+
+    def test_quitar_conserva_el_progreso_del_pdf(self):
+        call_command("cargar_extras", verbosity=0)
+        item = Item.objects.filter(generado=False).first()
+        item.alternar()
+
+        call_command("cargar_extras", "--quitar", verbosity=0)
+
+        item.refresh_from_db()
+        self.assertTrue(item.completado)
+
+    def test_sin_roadmap_previo_no_hace_nada(self):
+        Etapa.objects.all().delete()
+        call_command("cargar_extras", verbosity=0)
+        self.assertEqual(Item.objects.count(), 0)

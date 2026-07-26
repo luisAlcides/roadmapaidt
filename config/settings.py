@@ -4,10 +4,12 @@ lo único que cambia entre los dos entornos son las variables de entorno.
 """
 
 import os
+import sys
 from pathlib import Path
 
 import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
+from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -15,20 +17,29 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # En local lee el .env; en Railway las variables ya vienen del entorno.
 load_dotenv(BASE_DIR / ".env")
 
+# collectstatic solo copia archivos al disco: no firma nada ni toca la base.
+# Corre durante el build de Railway, donde las variables del servicio pueden no
+# estar disponibles todavía, así que ahí no las exigimos. Cualquier otro
+# comando —y sobre todo servir tráfico— sí las necesita de verdad.
+ES_BUILD = "collectstatic" in sys.argv
 
-def requerido(nombre):
+
+def requerido(nombre, marcador=None):
     """Variable de entorno obligatoria: mejor fallar claro que arrancar roto."""
     valor = os.environ.get(nombre)
-    if not valor:
-        raise ImproperlyConfigured(
-            f"Falta la variable de entorno {nombre}. "
-            "En local, cópiala en el archivo .env (ver .env.example). "
-            "En Railway, defínela en Variables del servicio."
-        )
-    return valor
+    if valor:
+        return valor
+    if ES_BUILD and marcador:
+        return marcador
+    raise ImproperlyConfigured(
+        f"Falta la variable de entorno {nombre}. "
+        "En local, cópiala en el archivo .env (ver .env.example). "
+        "En Railway, defínela en Variables del servicio."
+    )
 
 
-SECRET_KEY = requerido("SECRET_KEY")
+# En build, una clave efímera que muere con el proceso y nunca sirve tráfico.
+SECRET_KEY = requerido("SECRET_KEY", marcador=get_random_secret_key())
 
 DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
 
@@ -87,7 +98,9 @@ WSGI_APPLICATION = "config.wsgi.application"
 # al enlazarlo; en local sale del .env.
 DATABASES = {
     "default": dj_database_url.parse(
-        requerido("DATABASE_URL"),
+        # En build no hay a qué conectarse ni hace falta; el marcador nunca se usa
+        # porque collectstatic no abre conexiones.
+        requerido("DATABASE_URL", marcador="postgresql://build@localhost/build"),
         conn_max_age=600,
         conn_health_checks=True,
     )

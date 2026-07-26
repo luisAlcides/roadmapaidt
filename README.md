@@ -35,6 +35,7 @@ source env/bin/activate
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py cargar_roadmap     # carga el contenido del PDF
+python manage.py cargar_extras      # agrega el contenido complementario
 python manage.py runserver
 ```
 
@@ -45,11 +46,26 @@ arranca y dice cuál. El `.env` lo lee python-dotenv y está en `.gitignore`.
 
 Para entrar al admin: `python manage.py createsuperuser`.
 
-### El comando `cargar_roadmap`
+### Los dos comandos de contenido
 
-Es idempotente: se puede correr las veces que sea sin duplicar items ni perder
-lo que ya marcaste (identifica cada item por etapa + título). Con `--reset`
-borra todo y vuelve a empezar de cero — ahí sí pierdes el progreso.
+`cargar_roadmap` carga el plan tal como está en el PDF: 5 etapas, 65 items.
+
+`cargar_extras` agrega contenido complementario que **no** viene del PDF —
+herramientas que las vacantes piden y el documento no menciona (window
+functions, Docker Compose, tests de datos, MLflow, pgvector, evaluación de RAG),
+más dos etapas nuevas: portafolio y el trámite de salida. Todo queda marcado con
+la etiqueta **Extra** en la interfaz y con `generado=True` en la base, así que se
+distingue de un vistazo y se borra entero con `cargar_extras --quitar` sin tocar
+lo del PDF ni tu progreso.
+
+Los dos son idempotentes: se pueden correr las veces que sea sin duplicar items
+ni perder lo que ya marcaste (identifican cada item por etapa + título). Solo
+`cargar_roadmap --reset` borra todo y empieza de cero — ahí sí pierdes el
+progreso.
+
+Ojo con la etapa 6: los requisitos de visa y las evaluaciones de credenciales
+cambian seguido. Lo que dice ahí es orientativo; confirma siempre en `canada.ca`
+y en `immi.homeaffairs.gov.au`.
 
 ## Deploy en Railway
 
@@ -75,6 +91,25 @@ primera vez la base queda poblada sola. `railway.json` define el build
 (`collectstatic`), el arranque con gunicorn y el healthcheck en `/`.
 
 Los estáticos los sirve WhiteNoise, así que no hace falta S3 ni CDN.
+
+### Si el deploy falla
+
+**`ImproperlyConfigured: Falta la variable de entorno SECRET_KEY`**
+No la definiste en **Variables** del servicio web, o la pusiste en el servicio
+equivocado (tiene que ir en el web, no en el de Postgres). Va sin comillas.
+
+**`Falta la variable de entorno DATABASE_URL`**
+El servicio de Postgres no está enlazado al web. Agrégalo desde el mismo
+proyecto con **New → Database → Add PostgreSQL**; Railway la inyecta sola.
+
+**`password authentication failed`**
+Pasa en local, no en Railway: el rol de Postgres no existe todavía o la clave
+del `.env` no coincide con la que le pusiste. Revisa el paso 1 de arriba.
+
+Nota: `collectstatic` corre durante el build, donde las variables del servicio
+pueden no estar disponibles. Como solo copia archivos, `settings.py` lo deja
+pasar con valores efímeros. Todo lo demás —incluido servir tráfico— sí exige las
+variables reales.
 
 ## Estructura
 

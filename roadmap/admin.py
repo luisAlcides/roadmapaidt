@@ -17,7 +17,7 @@ class EtapaAdmin(admin.ModelAdmin):
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ("titulo", "etapa", "tipo", "fuente", "completado")
-    list_filter = ("etapa", "tipo", "completado", "en_ingles")
+    list_display = ("titulo", "etapa", "tipo", "fuente", "completado", "generado")
+    list_filter = ("etapa", "tipo", "completado", "en_ingles", "generado")
     list_editable = ("completado",)
     search_fields = ("titulo", "fuente", "detalle")

@@ -61,6 +61,10 @@ class Item(models.Model):
     en_ingles = models.BooleanField(default=False)
     completado = models.BooleanField(default=False)
     completado_en = models.DateTimeField(null=True, blank=True)
+    generado = models.BooleanField(
+        default=False,
+        help_text="Item añadido como complemento, no viene del PDF original.",
+    )
     orden = models.PositiveIntegerField(default=0)
     creado_en = models.DateTimeField(auto_now_add=True)
 
