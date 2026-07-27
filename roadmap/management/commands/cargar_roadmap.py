@@ -393,6 +393,7 @@ ROADMAP = [
     },
     {
         "orden": 4,
+        "paralela": True,
         "kicker": "En paralelo · desde el día uno",
         "titulo": "Inglés, negocio y salida",
         "subtitulo": "Todo el recorrido",
@@ -498,15 +499,17 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **opciones):
+        completo = Etapa.objects.filter(ruta=Etapa.Ruta.COMPLETO)
+
         if opciones["reset"]:
-            Etapa.objects.all().delete()
+            completo.delete()
             self.stdout.write(self.style.WARNING("Etapas e items borrados."))
 
         nuevos = 0
         for datos in ROADMAP:
             items = datos.pop("items")
             etapa, _ = Etapa.objects.update_or_create(
-                orden=datos["orden"], defaults=datos
+                ruta=Etapa.Ruta.COMPLETO, orden=datos["orden"], defaults=datos
             )
             datos["items"] = items  # el comando puede correr dos veces en la misma sesión
 
@@ -529,7 +532,8 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Roadmap cargado: {Etapa.objects.count()} etapas, "
-                f"{Item.objects.count()} items ({nuevos} nuevos)."
+                f"Roadmap cargado: {completo.count()} etapas, "
+                f"{Item.objects.filter(etapa__ruta=Etapa.Ruta.COMPLETO).count()} "
+                f"items ({nuevos} nuevos)."
             )
         )

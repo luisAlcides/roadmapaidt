@@ -211,3 +211,68 @@ class CargarAiMlTests(TestCase):
 
         titulos = list(Item.objects.values_list("etapa_id", "titulo"))
         self.assertEqual(len(titulos), len(set(titulos)))
+
+
+class RutaEnfocadaTests(TestCase):
+    def setUp(self):
+        self.usuario = User.objects.create_user("alcides", password="clave-larga-123")
+        self.client.login(username="alcides", password="clave-larga-123")
+        call_command("cargar_roadmap", verbosity=0)
+        call_command("cargar_ruta_enfocada", verbosity=0)
+
+    def test_convive_con_el_catalogo_sin_chocar_ordenes(self):
+        completo = Etapa.objects.filter(ruta=Etapa.Ruta.COMPLETO)
+        enfocada = Etapa.objects.filter(ruta=Etapa.Ruta.ENFOCADA)
+
+        self.assertEqual(completo.count(), 5)
+        self.assertEqual(enfocada.count(), 6)
+        # Las dos rutas empiezan en orden 0 sin pisarse.
+        self.assertTrue(completo.filter(orden=0).exists())
+        self.assertTrue(enfocada.filter(orden=0).exists())
+
+    def test_cada_pagina_cuenta_solo_lo_suyo(self):
+        de_enfocada = Item.objects.filter(etapa__ruta=Etapa.Ruta.ENFOCADA).count()
+
+        respuesta = self.client.get("/enfocada/")
+
+        self.assertEqual(respuesta.status_code, 200)
+        self.assertEqual(respuesta.context["total"], de_enfocada)
+        self.assertEqual(respuesta.context["ruta"], Etapa.Ruta.ENFOCADA)
+        self.assertEqual(self.client.get("/").context["total"], 65)
+
+    def test_tiene_una_etapa_en_paralelo(self):
+        paralelas = Etapa.objects.filter(ruta=Etapa.Ruta.ENFOCADA, paralela=True)
+        self.assertEqual(paralelas.count(), 1)
+
+    def test_todo_curso_o_libro_trae_enlace(self):
+        sin_enlace = Item.objects.filter(
+            etapa__ruta=Etapa.Ruta.ENFOCADA,
+            tipo__in=[Item.Tipo.CURSO, Item.Tipo.LIBRO],
+            url="",
+        )
+        # Solo la práctica de inglés diaria no tiene a dónde apuntar.
+        self.assertLessEqual(sin_enlace.count(), 1)
+
+    def test_es_idempotente(self):
+        total = Item.objects.count()
+        call_command("cargar_ruta_enfocada", verbosity=0)
+        self.assertEqual(Item.objects.count(), total)
+
+    def test_quitar_no_toca_el_catalogo(self):
+        call_command("cargar_ruta_enfocada", "--quitar", verbosity=0)
+
+        self.assertFalse(Etapa.objects.filter(ruta=Etapa.Ruta.ENFOCADA).exists())
+        self.assertEqual(Item.objects.count(), 65)
+
+    def test_alternar_devuelve_el_total_de_su_ruta(self):
+        item = Item.objects.filter(etapa__ruta=Etapa.Ruta.ENFOCADA).first()
+
+        respuesta = self.client.post(
+            f"/item/{item.pk}/alternar/", headers={"x-requested-with": "fetch"}
+        )
+
+        datos = respuesta.json()
+        self.assertEqual(
+            datos["global_total"],
+            Item.objects.filter(etapa__ruta=Etapa.Ruta.ENFOCADA).count(),
+        )

@@ -3,9 +3,23 @@ from django.utils import timezone
 
 
 class Etapa(models.Model):
-    """Un nivel del roadmap. El orden define el recorrido del mapa."""
+    """Un nivel de un roadmap. El orden define el recorrido del mapa."""
 
-    orden = models.PositiveIntegerField(unique=True)
+    class Ruta(models.TextChoices):
+        COMPLETO = "completo", "Roadmap completo"
+        ENFOCADA = "enfocada", "Ruta enfocada AI/ML Engineer"
+
+    ruta = models.CharField(
+        max_length=20,
+        choices=Ruta.choices,
+        default=Ruta.COMPLETO,
+        help_text="A qué recorrido pertenece esta etapa.",
+    )
+    orden = models.PositiveIntegerField()
+    paralela = models.BooleanField(
+        default=False,
+        help_text="Va en la columna lateral: corre en paralelo, no en secuencia.",
+    )
     kicker = models.CharField(max_length=80, blank=True)
     titulo = models.CharField(max_length=120)
     subtitulo = models.CharField(max_length=200, blank=True)
@@ -15,11 +29,16 @@ class Etapa(models.Model):
     color = models.CharField(max_length=7, default="#c2703d")
 
     class Meta:
-        ordering = ["orden"]
+        ordering = ["ruta", "orden"]
         verbose_name_plural = "Etapas"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["ruta", "orden"], name="etapa_orden_unico_por_ruta"
+            )
+        ]
 
     def __str__(self):
-        return f"{self.orden} · {self.titulo}"
+        return f"{self.get_ruta_display()} · {self.orden} · {self.titulo}"
 
     @property
     def total(self):

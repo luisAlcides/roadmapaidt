@@ -82,6 +82,17 @@
     display: block; font-weight: 500; font-size: 12px; color: var(--tenue);
     letter-spacing: .04em; text-transform: uppercase;
   }
+  .selector-ruta { display: flex; gap: 4px; padding: 3px; border: 1px solid var(--linea);
+    border-radius: 10px; background: var(--bg-alt); }
+  .selector-ruta a {
+    text-decoration: none; font-size: 12.5px; font-weight: 600; color: var(--tenue);
+    padding: 4px 11px; border-radius: 7px; white-space: nowrap; transition: all .2s;
+  }
+  .selector-ruta a:hover { color: var(--tinta); }
+  .selector-ruta a.activa {
+    color: var(--acento); background: color-mix(in srgb, var(--acento) 10%, transparent);
+  }
+
   .barra-prog { flex: 1 1 220px; min-width: 160px; }
   .barra-prog-cifras {
     display: flex; justify-content: space-between;
@@ -333,6 +344,12 @@
       <small>Data &amp; IA · Alcides</small>
     </div>
     {% if user.is_authenticated %}
+    <nav class="selector-ruta" aria-label="Elegir ruta">
+      <a href="{% url 'enfocada' %}" {% if ruta == 'enfocada' %}class="activa" aria-current="page"{% endif %}>Ruta enfocada</a>
+      <a href="{% url 'index' %}" {% if ruta == 'completo' %}class="activa" aria-current="page"{% endif %}>Catálogo completo</a>
+    </nav>
+    {% endif %}
+    {% if user.is_authenticated %}
     <div class="barra-usuario" style="font-size: 13.5px; color: var(--tinta-suave); display: flex; align-items: center; gap: 10px; margin-right: 15px;">
       <span>Hola, <b>{{ user.username }}</b></span>
       
@@ -354,13 +371,9 @@
 </header>
 
 <section class="portada">
-  <p class="kicker">Plan de formación · 15–18 meses</p>
-  <h1>De ingeniero de mantenimiento a ingeniero de datos e IA</h1>
-  <p class="lead">
-    Ruta con Platzi y Udemy hacia el mantenimiento predictivo en minería.
-    40 % ingeniería de datos, 40 % ciencia de datos, 20 % AI engineering.
-    Ve tachando lo que avanzas y agrega lo que falte.
-  </p>
+  <p class="kicker">{{ portada.kicker }}</p>
+  <h1>{{ portada.titulo }}</h1>
+  <p class="lead">{{ portada.lead }}</p>
   <div class="fichas">
     <div class="ficha"><b>{{ etapas|length }}</b><span>Niveles</span></div>
     <div class="ficha"><b>{{ hechos }}/{{ total }}</b><span>Items</span></div>
@@ -372,7 +385,7 @@
 <div class="contenedor-layout">
   <main class="mapa">
     {% for etapa in etapas %}
-    {% if etapa.orden != 4 %}
+    {% if not etapa.paralela %}
     <section class="nivel {% if etapa.completa %}hecha{% elif etapa.hechos %}activa{% endif %} {% if forloop.last %}ultimo-nivel{% endif %}"
              id="etapa-{{ etapa.pk }}" data-etapa="{{ etapa.pk }}"
              style="--nivel-color: {{ etapa.color }}">
@@ -460,6 +473,7 @@
         <summary>Crear una etapa nueva</summary>
         <form class="nuevo" method="post" action="{% url 'crear_etapa' %}">
           {% csrf_token %}
+          <input type="hidden" name="ruta" value="{{ ruta }}">
           <input class="ancho" type="text" name="titulo" placeholder="Nombre de la etapa" required>
           <input type="text" name="kicker" placeholder="Etiqueta (ej. Etapa 5)">
           <input type="text" name="duracion" placeholder="Duración (ej. 2 meses)">
@@ -472,7 +486,7 @@
 
   <aside class="columna-paralela">
     {% for etapa in etapas %}
-    {% if etapa.orden == 4 %}
+    {% if etapa.paralela %}
     <div class="seccion-paralela-tit">
       <span>✦</span> En paralelo · Toda la ruta
     </div>

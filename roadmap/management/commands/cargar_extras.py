@@ -378,7 +378,8 @@ class Command(BaseCommand):
         if opciones["quitar"]:
             borrados_i, _ = Item.objects.filter(generado=True).delete()
             borrados_e, _ = Etapa.objects.filter(
-                orden__in=[e["orden"] for e in ETAPAS_NUEVAS]
+                ruta=Etapa.Ruta.COMPLETO,
+                orden__in=[e["orden"] for e in ETAPAS_NUEVAS],
             ).delete()
             self.stdout.write(
                 self.style.WARNING(
@@ -391,7 +392,7 @@ class Command(BaseCommand):
         for datos in ETAPAS_NUEVAS:
             items = datos.pop("items")
             etapa, _ = Etapa.objects.update_or_create(
-                orden=datos["orden"], defaults=datos
+                ruta=Etapa.Ruta.COMPLETO, orden=datos["orden"], defaults=datos
             )
             datos["items"] = items
 
@@ -416,7 +417,9 @@ class Command(BaseCommand):
         nuevos_items = 0
         for orden_etapa, items in EXTRAS_POR_ETAPA.items():
             try:
-                etapa = Etapa.objects.get(orden=orden_etapa)
+                etapa = Etapa.objects.get(
+                    ruta=Etapa.Ruta.COMPLETO, orden=orden_etapa
+                )
             except Etapa.DoesNotExist:
                 continue
 

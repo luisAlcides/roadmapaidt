@@ -296,7 +296,9 @@ class Command(BaseCommand):
             borrados_i, _ = Item.objects.filter(
                 generado=True, titulo__in=titulos
             ).delete()
-            borrados_e, _ = Etapa.objects.filter(orden__in=ordenes_nuevas).delete()
+            borrados_e, _ = Etapa.objects.filter(
+                ruta=Etapa.Ruta.COMPLETO, orden__in=ordenes_nuevas
+            ).delete()
             self.stdout.write(
                 self.style.WARNING(
                     f"Eliminados {borrados_i} items extras y {borrados_e} etapas AI/ML."
@@ -310,7 +312,7 @@ class Command(BaseCommand):
         for datos in ETAPAS_NUEVAS:
             items = datos.pop("items")
             etapa, _ = Etapa.objects.update_or_create(
-                orden=datos["orden"], defaults=datos
+                ruta=Etapa.Ruta.COMPLETO, orden=datos["orden"], defaults=datos
             )
             datos["items"] = items
 
@@ -332,7 +334,9 @@ class Command(BaseCommand):
         # 2. Extras sobre etapas existentes
         for orden_etapa, items in EXTRAS_POR_ETAPA.items():
             try:
-                etapa = Etapa.objects.get(orden=orden_etapa)
+                etapa = Etapa.objects.get(
+                    ruta=Etapa.Ruta.COMPLETO, orden=orden_etapa
+                )
             except Etapa.DoesNotExist:
                 self.stdout.write(
                     self.style.WARNING(

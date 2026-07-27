@@ -11,13 +11,14 @@ class ItemInline(admin.TabularInline):
 
 @admin.register(Etapa)
 class EtapaAdmin(admin.ModelAdmin):
-    list_display = ("orden", "titulo", "duracion", "hechos", "total", "porcentaje")
+    list_display = ("orden", "titulo", "ruta", "paralela", "hechos", "total", "porcentaje")
+    list_filter = ("ruta",)
     inlines = [ItemInline]
 
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
     list_display = ("titulo", "etapa", "tipo", "fuente", "completado", "generado")
-    list_filter = ("etapa", "tipo", "completado", "en_ingles", "generado")
+    list_filter = ("etapa__ruta", "etapa", "tipo", "completado", "en_ingles", "generado")
     list_editable = ("completado",)
     search_fields = ("titulo", "fuente", "detalle", "url")

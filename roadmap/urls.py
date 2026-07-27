@@ -5,6 +5,7 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
+    path("enfocada/", views.enfocada, name="enfocada"),
     path("login/", auth_views.LoginView.as_view(template_name="roadmap/login.html"), name="login"),
     path("logout/", views.logout_view, name="logout"),
     path("signup/", views.signup, name="signup"),

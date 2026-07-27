@@ -5,6 +5,23 @@ App Django para seguir el plan de formación de 15–18 meses del PDF
 libros y advertencias. Se marca lo que se va completando y se puede agregar lo
 que falte.
 
+## Dos rutas
+
+La app sirve dos recorridos independientes, cada uno con su página y sus
+propios contadores:
+
+| Página | Ruta | Para qué |
+|---|---|---|
+| `/enfocada/` | **Ruta enfocada** · 12 meses, 6 etapas, ~100 items | El plan que se sigue de verdad: una sola carrera, AI/ML Engineer con especialidad industrial. |
+| `/` | **Catálogo completo** · 12 etapas, ~700 items | Todo lo del PDF más los complementos. Sirve para consultar y elegir, no para ejecutar. |
+
+La recomendación es seguir la enfocada y usar el catálogo como biblioteca. Un
+plan de 700 items en 18 meses no se termina, y un perfil que toca cuatro oficios
+—Data Engineer, Data Scientist, AI Engineer e IoT— no gana ninguna entrevista.
+La ruta enfocada apuesta por ML Engineer que sabe llevar modelos a producción,
+con mantenimiento predictivo y confiabilidad como nicho; la ingeniería de datos
+entra como herramienta, no como especialidad aparte.
+
 ## Qué hace
 
 - **Mapa de niveles**: cada etapa es un nodo del recorrido; se ilumina cuando la
@@ -37,6 +54,7 @@ python manage.py migrate
 python manage.py cargar_roadmap     # carga el contenido del PDF
 python manage.py cargar_extras      # agrega el contenido complementario
 python manage.py cargar_ai_ml       # agrega la ruta especializada de AI/ML
+python manage.py cargar_ruta_enfocada   # carga la ruta enfocada de /enfocada/
 python manage.py runserver
 ```
 
@@ -47,7 +65,7 @@ arranca y dice cuál. El `.env` lo lee python-dotenv y está en `.gitignore`.
 
 Para entrar al admin: `python manage.py createsuperuser`.
 
-### Los tres comandos de contenido
+### Los comandos de contenido
 
 `cargar_roadmap` carga el plan tal como está en el PDF: 5 etapas, 65 items.
 
@@ -70,7 +88,12 @@ oficial, y los libros a su versión gratuita cuando existe o a Open Library si n
 Casi todo el material es gratuito; lo que no lo es va marcado. Se borra entero con
 `cargar_ai_ml --quitar` sin tocar lo demás.
 
-Los tres son idempotentes: se pueden correr las veces que sea sin duplicar items
+`cargar_ruta_enfocada` es el único que escribe en la otra ruta. Carga las seis
+etapas de `/enfocada/` y no toca nada del catálogo; `--quitar` borra la ruta
+entera sin efectos colaterales, porque se identifica por `ruta`, no por
+`generado`.
+
+Los cuatro son idempotentes: se pueden correr las veces que sea sin duplicar items
 ni perder lo que ya marcaste (identifican cada item por etapa + título). Solo
 `cargar_roadmap --reset` borra todo y empieza de cero — ahí sí pierdes el
 progreso.
