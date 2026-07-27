@@ -82,17 +82,6 @@
     display: block; font-weight: 500; font-size: 12px; color: var(--tenue);
     letter-spacing: .04em; text-transform: uppercase;
   }
-  .selector-ruta { display: flex; gap: 4px; padding: 3px; border: 1px solid var(--linea);
-    border-radius: 10px; background: var(--bg-alt); }
-  .selector-ruta a {
-    text-decoration: none; font-size: 12.5px; font-weight: 600; color: var(--tenue);
-    padding: 4px 11px; border-radius: 7px; white-space: nowrap; transition: all .2s;
-  }
-  .selector-ruta a:hover { color: var(--tinta); }
-  .selector-ruta a.activa {
-    color: var(--acento); background: color-mix(in srgb, var(--acento) 10%, transparent);
-  }
-
   .barra-prog { flex: 1 1 220px; min-width: 160px; }
   .barra-prog-cifras {
     display: flex; justify-content: space-between;
@@ -344,12 +333,6 @@
       <small>Data &amp; IA · Alcides</small>
     </div>
     {% if user.is_authenticated %}
-    <nav class="selector-ruta" aria-label="Elegir ruta">
-      <a href="{% url 'enfocada' %}" {% if ruta == 'enfocada' %}class="activa" aria-current="page"{% endif %}>Ruta enfocada</a>
-      <a href="{% url 'index' %}" {% if ruta == 'completo' %}class="activa" aria-current="page"{% endif %}>Catálogo completo</a>
-    </nav>
-    {% endif %}
-    {% if user.is_authenticated %}
     <div class="barra-usuario" style="font-size: 13.5px; color: var(--tinta-suave); display: flex; align-items: center; gap: 10px; margin-right: 15px;">
       <span>Hola, <b>{{ user.username }}</b></span>
       
@@ -570,7 +553,7 @@
 
   <aside class="columna-libros">
     <div class="seccion-paralela-tit">
-      <span>📚</span> Biblioteca · Lectura
+      <span>📚</span> Biblioteca · {{ libros_total }} libros · compartida
     </div>
     <div class="nivel nivel-paralelo" style="--nivel-color: var(--acento)">
       <div class="nodo" style="display: none;"></div>

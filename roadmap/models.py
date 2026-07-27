@@ -20,6 +20,10 @@ class Etapa(models.Model):
         default=False,
         help_text="Va en la columna lateral: corre en paralelo, no en secuencia.",
     )
+    oculta = models.BooleanField(
+        default=False,
+        help_text="No se dibuja en el mapa. Para contenedores como la biblioteca.",
+    )
     kicker = models.CharField(max_length=80, blank=True)
     titulo = models.CharField(max_length=120)
     subtitulo = models.CharField(max_length=200, blank=True)

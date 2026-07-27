@@ -1,26 +1,26 @@
-# Roadmap · De mantenimiento a ingeniería de datos e IA
+# Roadmap · De mantenimiento a AI/ML Engineer
 
-App Django para seguir el plan de formación de 15–18 meses del PDF
-`roadmap-data-ia-alcides.pdf`: cinco niveles, 65 items entre cursos, entregables,
-libros y advertencias. Se marca lo que se va completando y se puede agregar lo
-que falte.
+App Django para seguir un plan de formación de doce meses. Se marca lo que se va
+completando y se puede agregar lo que falte.
 
-## Dos rutas
+## Qué es
 
-La app sirve dos recorridos independientes, cada uno con su página y sus
-propios contadores:
+Una sola ruta: **AI/ML Engineer con especialidad industrial**, doce meses,
+seis etapas, 83 items entre cursos, entregables y advertencias. Cada item trae
+enlace directo al recurso.
 
-| Página | Ruta | Para qué |
-|---|---|---|
-| `/enfocada/` | **Ruta enfocada** · 12 meses, 6 etapas, ~100 items | El plan que se sigue de verdad: una sola carrera, AI/ML Engineer con especialidad industrial. |
-| `/` | **Catálogo completo** · 12 etapas, ~700 items | Todo lo del PDF más los complementos. Sirve para consultar y elegir, no para ejecutar. |
+El catálogo viejo —los cuatro oficios del PDF más los complementos— se podó:
+dispersaba el esfuerzo en cuatro carreras a la vez y ninguna quedaba
+demostrable. Lo único que se conservó de él es la biblioteca.
 
-La recomendación es seguir la enfocada y usar el catálogo como biblioteca. Un
-plan de 700 items en 18 meses no se termina, y un perfil que toca cuatro oficios
-—Data Engineer, Data Scientist, AI Engineer e IoT— no gana ninguna entrevista.
-La ruta enfocada apuesta por ML Engineer que sabe llevar modelos a producción,
-con mantenimiento predictivo y confiabilidad como nicho; la ingeniería de datos
-entra como herramienta, no como especialidad aparte.
+**La biblioteca son ~270 libros** en una etapa aparte que no se dibuja en el
+mapa: no tienen fecha ni orden, se leen cuando toca. Por eso la barra de
+progreso de arriba mide solo el plan de doce meses, y los libros llevan su
+propio contador.
+
+Si algún día quieres el catálogo de vuelta, sigue reproducible con
+`cargar_roadmap`, `cargar_extras` y `cargar_ai_ml` — lo que no vuelve son las
+marcas de completado que tenía.
 
 ## Qué hace
 
@@ -51,10 +51,8 @@ python -c "from django.core.management.utils import get_random_secret_key as k; 
 source env/bin/activate
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py cargar_roadmap     # carga el contenido del PDF
-python manage.py cargar_extras      # agrega el contenido complementario
-python manage.py cargar_ai_ml       # agrega la ruta especializada de AI/ML
-python manage.py cargar_ruta_enfocada   # carga la ruta enfocada de /enfocada/
+python manage.py cargar_ruta_enfocada   # el plan de doce meses
+python manage.py cargar_biblioteca      # los ~270 libros
 python manage.py runserver
 ```
 
@@ -67,45 +65,17 @@ Para entrar al admin: `python manage.py createsuperuser`.
 
 ### Los comandos de contenido
 
-`cargar_roadmap` carga el plan tal como está en el PDF: 5 etapas, 65 items.
+| Comando | Qué hace |
+|---|---|
+| `cargar_ruta_enfocada` | Las seis etapas del plan de doce meses. |
+| `cargar_biblioteca` | Los ~270 libros, en su etapa oculta. |
+| `podar_catalogo --si` | Borra el catálogo viejo si existe, rescatando sus libros primero. No hace nada si ya se podó. |
+| `cargar_roadmap`, `cargar_extras`, `cargar_ai_ml` | El catálogo viejo. Quedan disponibles pero no se corren en el despliegue. |
 
-`cargar_extras` agrega contenido complementario que **no** viene del PDF —
-herramientas que las vacantes piden y el documento no menciona (window
-functions, Docker Compose, tests de datos, MLflow, pgvector, evaluación de RAG),
-más dos etapas nuevas: portafolio y el trámite de salida. Todo queda marcado con
-la etiqueta **Extra** en la interfaz y con `generado=True` en la base, así que se
-distingue de un vistazo y se borra entero con `cargar_extras --quitar` sin tocar
-lo del PDF ni tu progreso.
-
-`cargar_ai_ml` agrega la ruta especializada de **AI/ML Engineer**, con fuentes
-que van más allá de Platzi y Udemy: Stanford (CS229, CS224N, CS231n), MIT 6.S191,
-fast.ai, Neural Networks Zero to Hero de Karpathy, Hugging Face, DeepLearning.AI,
-MLOps Zoomcamp, Full Stack Deep Learning, documentación oficial y papers de arXiv.
-Son cuatro etapas nuevas —deep learning desde los cimientos, MLOps, LLM
-engineering avanzado, y papers/entrevistas— más extras en las etapas 0, 2 y 3.
-Cada item trae su **enlace directo**: los cursos y papers apuntan a la página
-oficial, y los libros a su versión gratuita cuando existe o a Open Library si no.
-Casi todo el material es gratuito; lo que no lo es va marcado. Se borra entero con
-`cargar_ai_ml --quitar` sin tocar lo demás.
-
-`cargar_ruta_enfocada` es el único que escribe en la otra ruta. Carga las seis
-etapas de `/enfocada/` y no toca nada del catálogo; `--quitar` borra la ruta
-entera sin efectos colaterales, porque se identifica por `ruta`, no por
-`generado`.
-
-Los cuatro son idempotentes: se pueden correr las veces que sea sin duplicar items
-ni perder lo que ya marcaste (identifican cada item por etapa + título). Solo
-`cargar_roadmap --reset` borra todo y empieza de cero — ahí sí pierdes el
-progreso.
-
-Un detalle entre los dos comandos de extras: `cargar_ai_ml --quitar` borra solo
-lo suyo, pero `cargar_extras --quitar` es más viejo y arrasa con **todo** lo
-marcado `generado=True`, incluida la ruta de AI/ML. Si eso pasa, se recupera
-volviendo a correr `cargar_ai_ml`.
-
-Ojo con la etapa 6: los requisitos de visa y las evaluaciones de credenciales
-cambian seguido. Lo que dice ahí es orientativo; confirma siempre en `canada.ca`
-y en `immi.homeaffairs.gov.au`.
+Todos son idempotentes: se pueden correr las veces que sea sin duplicar items
+ni perder lo que ya marcaste (identifican cada item por etapa + título).
+`podar_catalogo` es la excepción en un sentido: es destructivo por diseño y
+pide confirmación salvo que se le pase `--si`.
 
 ## Deploy en Railway
 
@@ -131,7 +101,8 @@ en el build: durante el build la red privada de Railway todavía no resuelve
 `postgres.railway.internal`. El arranque completo es:
 
 ```
-esperar_db → migrate → cargar_roadmap → cargar_extras → cargar_ai_ml → gunicorn
+esperar_db → migrate → cargar_ruta_enfocada → cargar_biblioteca →
+podar_catalogo --si → gunicorn
 ```
 
 Todo eso es idempotente, así que se repite sin daño en cada deploy y la primera
@@ -178,7 +149,9 @@ config/          settings, urls, wsgi
 roadmap/
   models.py      Etapa e Item
   views.py       índice, alternar, crear, borrar
-  management/commands/cargar_roadmap.py   el contenido del PDF
+  management/commands/cargar_ruta_enfocada.py  el plan de doce meses
+  management/commands/cargar_biblioteca.py     los libros
+  management/commands/podar_catalogo.py        borra el catálogo viejo
 templates/roadmap/index.html              toda la interfaz (CSS y JS incluidos)
 ```
 

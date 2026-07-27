@@ -10,47 +10,32 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import Etapa, Item
 
 
-def _inicio(ruta):
-    """A qué página volver después de un POST, según la ruta de la etapa."""
-    return reverse("enfocada" if ruta == Etapa.Ruta.ENFOCADA else "index")
-
-
-PORTADAS = {
-    Etapa.Ruta.COMPLETO: {
-        "kicker": "Plan de formación · 15–18 meses",
-        "titulo": "De ingeniero de mantenimiento a ingeniero de datos e IA",
-        "lead": (
-            "El recorrido completo: ingeniería de datos, ciencia de datos, "
-            "AI engineering, IoT industrial y la salida al extranjero. Es un "
-            "catálogo, no una agenda — sirve para consultar y elegir."
-        ),
-    },
-    Etapa.Ruta.ENFOCADA: {
-        "kicker": "Ruta enfocada · 12 meses",
-        "titulo": "AI/ML Engineer con especialidad industrial",
-        "lead": (
-            "Una sola carrera, sin ramas paralelas: llevar modelos a "
-            "producción para operaciones industriales. Cada item está aquí "
-            "porque un empleador lo paga o porque sin él lo siguiente no se "
-            "sostiene."
-        ),
-    },
+PORTADA = {
+    "kicker": "Ruta enfocada · 12 meses",
+    "titulo": "AI/ML Engineer con especialidad industrial",
+    "lead": (
+        "Una sola carrera, sin ramas paralelas: llevar modelos a producción "
+        "para operaciones industriales. Cada item está aquí porque un "
+        "empleador lo paga o porque sin él lo siguiente no se sostiene."
+    ),
 }
 
 
 def _pagina_roadmap(request, ruta):
-    etapas = Etapa.objects.filter(ruta=ruta).prefetch_related("items")
-    items = Item.objects.filter(etapa__ruta=ruta)
+    etapas = Etapa.objects.filter(ruta=ruta, oculta=False).prefetch_related("items")
+    items = Item.objects.filter(etapa__ruta=ruta, etapa__oculta=False)
 
     total = items.count()
     hechos = items.filter(completado=True).count()
-    libros = items.filter(tipo=Item.Tipo.LIBRO)
+    # La biblioteca es una sola para las dos rutas: un libro leído lo está en
+    # ambas páginas. El plan de cada ruta sí es suyo.
+    libros = Item.objects.filter(tipo=Item.Tipo.LIBRO)
     libros_count = libros.count()
     libros_hechos_count = libros.filter(completado=True).count()
 
     return {
         "ruta": ruta,
-        "portada": PORTADAS[ruta],
+        "portada": PORTADA,
         "etapas": etapas,
         "total": total,
         "hechos": hechos,
@@ -65,13 +50,7 @@ def _pagina_roadmap(request, ruta):
 
 @login_required
 def index(request):
-    contexto = _pagina_roadmap(request, Etapa.Ruta.COMPLETO)
-    return render(request, "roadmap/index.html", contexto)
-
-
-@login_required
-def enfocada(request):
-    """La ruta de una sola carrera: AI/ML Engineer industrial."""
+    """La única página: la ruta enfocada de AI/ML Engineer industrial."""
     contexto = _pagina_roadmap(request, Etapa.Ruta.ENFOCADA)
     return render(request, "roadmap/index.html", contexto)
 
@@ -85,10 +64,12 @@ def alternar_item(request, pk):
 
     if request.headers.get("x-requested-with") == "fetch":
         # Los contadores globales son por ruta: cada página lleva su propio total.
-        de_la_ruta = Item.objects.filter(etapa__ruta=etapa.ruta)
+        de_la_ruta = Item.objects.filter(
+            etapa__ruta=etapa.ruta, etapa__oculta=False
+        )
         total = de_la_ruta.count()
         hechos = de_la_ruta.filter(completado=True).count()
-        libros = de_la_ruta.filter(tipo=Item.Tipo.LIBRO)
+        libros = Item.objects.filter(tipo=Item.Tipo.LIBRO)
         libros_count = libros.count()
         libros_hechos_count = libros.filter(completado=True).count()
 
@@ -108,7 +89,7 @@ def alternar_item(request, pk):
                 "libros_porcentaje": round(libros_hechos_count * 100 / libros_count) if libros_count else 0,
             }
         )
-    return redirect(_inicio(etapa.ruta))
+    return redirect(reverse("index"))
 
 
 @login_required
@@ -128,7 +109,7 @@ def crear_item(request, etapa_pk):
             detalle=request.POST.get("detalle", "").strip(),
             orden=(ultimo.orden + 1) if ultimo else 0,
         )
-    return redirect(f"{_inicio(etapa.ruta)}#etapa-{etapa.pk}")
+    return redirect(f"{reverse('index')}#etapa-{etapa.pk}")
 
 
 @login_required
@@ -137,16 +118,16 @@ def borrar_item(request, pk):
     item = get_object_or_404(Item, pk=pk)
     etapa = item.etapa
     item.delete()
-    return redirect(f"{_inicio(etapa.ruta)}#etapa-{etapa.pk}")
+    return redirect(f"{reverse('index')}#etapa-{etapa.pk}")
 
 
 @login_required
 @require_POST
 def crear_etapa(request):
     titulo = request.POST.get("titulo", "").strip()
-    ruta = request.POST.get("ruta") or Etapa.Ruta.COMPLETO
+    ruta = request.POST.get("ruta") or Etapa.Ruta.ENFOCADA
     if ruta not in Etapa.Ruta.values:
-        ruta = Etapa.Ruta.COMPLETO
+        ruta = Etapa.Ruta.ENFOCADA
 
     if titulo:
         ultima = Etapa.objects.filter(ruta=ruta).order_by("-orden").first()
@@ -159,7 +140,7 @@ def crear_etapa(request):
             duracion=request.POST.get("duracion", "").strip(),
             color=request.POST.get("color") or "#c2703d",
         )
-    return redirect(_inicio(ruta))
+    return redirect(reverse("index"))
 
 
 @login_required
@@ -181,7 +162,7 @@ def crear_item_global(request):
             orden=(ultimo.orden + 1) if ultimo else 0,
             generado=True,
         )
-    return redirect(_inicio(etapa.ruta))
+    return redirect(reverse("index"))
 
 
 def signup(request):

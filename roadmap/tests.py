@@ -86,186 +86,88 @@ class VistaTests(TestCase):
         self.assertEqual(nueva.orden, 1)
 
 
-class CargarRoadmapTests(TestCase):
-    def test_carga_el_plan_del_pdf(self):
-        call_command("cargar_roadmap", verbosity=0)
-        self.assertEqual(Etapa.objects.count(), 5)
-        self.assertEqual(Item.objects.count(), 65)
-
-    def test_es_idempotente_y_conserva_el_progreso(self):
-        call_command("cargar_roadmap", verbosity=0)
-        item = Item.objects.first()
-        item.alternar()
-
-        call_command("cargar_roadmap", verbosity=0)
-
-        self.assertEqual(Item.objects.count(), 65)
-        item.refresh_from_db()
-        self.assertTrue(item.completado)
-
-    def test_reset_borra_todo(self):
-        call_command("cargar_roadmap", verbosity=0)
-        Item.objects.first().alternar()
-
-        call_command("cargar_roadmap", "--reset", verbosity=0)
-
-        self.assertEqual(Item.objects.count(), 65)
-        self.assertEqual(Item.objects.filter(completado=True).count(), 0)
-
-
-class CargarExtrasTests(TestCase):
-    def setUp(self):
-        call_command("cargar_roadmap", verbosity=0)
-
-    def test_agrega_contenido_y_lo_marca_como_generado(self):
-        call_command("cargar_extras", verbosity=0)
-
-        generados = Item.objects.filter(generado=True)
-        self.assertEqual(generados.count(), Item.objects.count() - 65)
-        self.assertEqual(Etapa.objects.count(), 8)
-        # Lo del PDF queda intacto.
-        self.assertEqual(Item.objects.filter(generado=False).count(), 65)
-
-    def test_es_idempotente(self):
-        call_command("cargar_extras", verbosity=0)
-        total = Item.objects.count()
-
-        call_command("cargar_extras", verbosity=0)
-
-        self.assertEqual(Item.objects.count(), total)
-
-    def test_quitar_deja_solo_el_pdf(self):
-        call_command("cargar_extras", verbosity=0)
-        call_command("cargar_extras", "--quitar", verbosity=0)
-
-        self.assertEqual(Item.objects.count(), 65)
-        self.assertEqual(Etapa.objects.count(), 5)
-
-    def test_quitar_conserva_el_progreso_del_pdf(self):
-        call_command("cargar_extras", verbosity=0)
-        item = Item.objects.filter(generado=False).first()
-        item.alternar()
-
-        call_command("cargar_extras", "--quitar", verbosity=0)
-
-        item.refresh_from_db()
-        self.assertTrue(item.completado)
-
-    def test_sin_roadmap_previo_no_hace_nada(self):
-        Etapa.objects.all().delete()
-        call_command("cargar_extras", verbosity=0)
-        self.assertEqual(Item.objects.count(), 0)
-
-
-class CargarAiMlTests(TestCase):
-    def setUp(self):
-        call_command("cargar_roadmap", verbosity=0)
-
-    def test_agrega_cuatro_etapas_y_marca_todo_como_generado(self):
-        call_command("cargar_ai_ml", verbosity=0)
-
-        self.assertEqual(Etapa.objects.count(), 9)
-        self.assertEqual(Item.objects.filter(generado=False).count(), 65)
-        for orden in (8, 9, 10, 11):
-            self.assertTrue(Etapa.objects.get(orden=orden).items.exists())
-
-    def test_casi_todo_trae_enlace_directo(self):
-        call_command("cargar_ai_ml", verbosity=0)
-
-        generados = Item.objects.filter(generado=True)
-        con_url = generados.exclude(url="")
-        # Los entregables y notas propias no tienen a dónde apuntar; el resto sí.
-        self.assertGreater(con_url.count(), generados.count() * 0.8)
-        self.assertFalse(
-            con_url.exclude(url__startswith="http").exists(),
-            "todas las urls deben ser absolutas",
-        )
-
-    def test_es_idempotente(self):
-        call_command("cargar_ai_ml", verbosity=0)
-        total = Item.objects.count()
-
-        call_command("cargar_ai_ml", verbosity=0)
-
-        self.assertEqual(Item.objects.count(), total)
-
-    def test_quitar_deja_solo_el_pdf(self):
-        call_command("cargar_ai_ml", verbosity=0)
-        call_command("cargar_ai_ml", "--quitar", verbosity=0)
-
-        self.assertEqual(Item.objects.count(), 65)
-        self.assertEqual(Etapa.objects.count(), 5)
-
-    def test_quitar_no_toca_los_extras_del_otro_comando(self):
-        call_command("cargar_extras", verbosity=0)
-        extras = Item.objects.filter(generado=True).count()
-
-        call_command("cargar_ai_ml", verbosity=0)
-        call_command("cargar_ai_ml", "--quitar", verbosity=0)
-
-        self.assertEqual(Item.objects.filter(generado=True).count(), extras)
-
-    def test_convive_con_cargar_extras_sin_duplicar(self):
-        call_command("cargar_extras", verbosity=0)
-        call_command("cargar_ai_ml", verbosity=0)
-
-        titulos = list(Item.objects.values_list("etapa_id", "titulo"))
-        self.assertEqual(len(titulos), len(set(titulos)))
-
-
 class RutaEnfocadaTests(TestCase):
     def setUp(self):
         self.usuario = User.objects.create_user("alcides", password="clave-larga-123")
         self.client.login(username="alcides", password="clave-larga-123")
-        call_command("cargar_roadmap", verbosity=0)
         call_command("cargar_ruta_enfocada", verbosity=0)
+        call_command("cargar_biblioteca", verbosity=0)
 
-    def test_convive_con_el_catalogo_sin_chocar_ordenes(self):
-        completo = Etapa.objects.filter(ruta=Etapa.Ruta.COMPLETO)
-        enfocada = Etapa.objects.filter(ruta=Etapa.Ruta.ENFOCADA)
-
-        self.assertEqual(completo.count(), 5)
-        self.assertEqual(enfocada.count(), 6)
-        # Las dos rutas empiezan en orden 0 sin pisarse.
-        self.assertTrue(completo.filter(orden=0).exists())
-        self.assertTrue(enfocada.filter(orden=0).exists())
-
-    def test_cada_pagina_cuenta_solo_lo_suyo(self):
-        de_enfocada = Item.objects.filter(etapa__ruta=Etapa.Ruta.ENFOCADA).count()
-
-        respuesta = self.client.get("/enfocada/")
+    def test_es_la_unica_ruta_y_vive_en_la_raiz(self):
+        respuesta = self.client.get("/")
 
         self.assertEqual(respuesta.status_code, 200)
-        self.assertEqual(respuesta.context["total"], de_enfocada)
         self.assertEqual(respuesta.context["ruta"], Etapa.Ruta.ENFOCADA)
-        self.assertEqual(self.client.get("/").context["total"], 65)
+        self.assertFalse(Etapa.objects.filter(ruta=Etapa.Ruta.COMPLETO).exists())
+
+    def test_el_progreso_es_del_plan_no_de_la_biblioteca(self):
+        """La barra de arriba mide los 12 meses; los libros tienen la suya."""
+        plan = Item.objects.filter(etapa__oculta=False).count()
+
+        respuesta = self.client.get("/")
+
+        self.assertEqual(respuesta.context["total"], plan)
+        self.assertGreater(respuesta.context["libros_total"], plan)
+
+    def test_la_biblioteca_no_se_dibuja_en_el_mapa(self):
+        etapas = self.client.get("/").context["etapas"]
+
+        self.assertEqual(len(etapas), 6)
+        self.assertTrue(Etapa.objects.filter(oculta=True).exists())
 
     def test_tiene_una_etapa_en_paralelo(self):
         paralelas = Etapa.objects.filter(ruta=Etapa.Ruta.ENFOCADA, paralela=True)
         self.assertEqual(paralelas.count(), 1)
 
-    def test_todo_curso_o_libro_trae_enlace(self):
+    def test_todo_curso_trae_enlace(self):
         sin_enlace = Item.objects.filter(
-            etapa__ruta=Etapa.Ruta.ENFOCADA,
-            tipo__in=[Item.Tipo.CURSO, Item.Tipo.LIBRO],
-            url="",
+            etapa__ruta=Etapa.Ruta.ENFOCADA, tipo=Item.Tipo.CURSO, url=""
         )
         # Solo la práctica de inglés diaria no tiene a dónde apuntar.
         self.assertLessEqual(sin_enlace.count(), 1)
+
+    def test_la_ruta_enfocada_no_tiene_libros_propios(self):
+        """Los libros viven una sola vez, en la biblioteca compartida."""
+        propios = Item.objects.filter(
+            etapa__ruta=Etapa.Ruta.ENFOCADA, tipo=Item.Tipo.LIBRO
+        )
+        self.assertFalse(propios.exists())
+
+    def test_la_biblioteca_entera_es_visible_y_con_enlace(self):
+        libros = Item.objects.filter(tipo=Item.Tipo.LIBRO)
+
+        respuesta = self.client.get("/")
+
+        self.assertEqual(respuesta.context["libros_total"], libros.count())
+        self.assertGreater(libros.count(), 250)
+        self.assertFalse(libros.filter(url="").exists())
+
+    def test_marcar_un_libro_no_mueve_la_barra_del_plan(self):
+        libro = Item.objects.filter(tipo=Item.Tipo.LIBRO).first()
+
+        respuesta = self.client.post(
+            f"/item/{libro.pk}/alternar/", headers={"x-requested-with": "fetch"}
+        )
+
+        datos = respuesta.json()
+        self.assertEqual(datos["libros_hechos"], 1)
+        self.assertEqual(datos["global_hechos"], 0)
 
     def test_es_idempotente(self):
         total = Item.objects.count()
         call_command("cargar_ruta_enfocada", verbosity=0)
         self.assertEqual(Item.objects.count(), total)
 
-    def test_quitar_no_toca_el_catalogo(self):
+    def test_quitar_deja_la_biblioteca_en_pie(self):
+        libros = Item.objects.filter(tipo=Item.Tipo.LIBRO).count()
+
         call_command("cargar_ruta_enfocada", "--quitar", verbosity=0)
 
-        self.assertFalse(Etapa.objects.filter(ruta=Etapa.Ruta.ENFOCADA).exists())
-        self.assertEqual(Item.objects.count(), 65)
+        self.assertEqual(Etapa.objects.filter(oculta=False).count(), 0)
+        self.assertEqual(Item.objects.filter(tipo=Item.Tipo.LIBRO).count(), libros)
 
-    def test_alternar_devuelve_el_total_de_su_ruta(self):
-        item = Item.objects.filter(etapa__ruta=Etapa.Ruta.ENFOCADA).first()
+    def test_alternar_devuelve_el_total_del_plan(self):
+        item = Item.objects.filter(etapa__oculta=False).first()
 
         respuesta = self.client.post(
             f"/item/{item.pk}/alternar/", headers={"x-requested-with": "fetch"}
@@ -273,6 +175,38 @@ class RutaEnfocadaTests(TestCase):
 
         datos = respuesta.json()
         self.assertEqual(
-            datos["global_total"],
-            Item.objects.filter(etapa__ruta=Etapa.Ruta.ENFOCADA).count(),
+            datos["global_total"], Item.objects.filter(etapa__oculta=False).count()
         )
+
+
+class PodarCatalogoTests(TestCase):
+    def setUp(self):
+        call_command("cargar_roadmap", verbosity=0)
+        call_command("cargar_ruta_enfocada", verbosity=0)
+
+    def test_rescata_los_libros_y_borra_el_resto(self):
+        libros = Item.objects.filter(tipo=Item.Tipo.LIBRO).count()
+        self.assertGreater(libros, 0)
+
+        call_command("podar_catalogo", "--si", verbosity=0)
+
+        self.assertFalse(Etapa.objects.filter(ruta=Etapa.Ruta.COMPLETO).exists())
+        self.assertEqual(Item.objects.filter(tipo=Item.Tipo.LIBRO).count(), libros)
+        self.assertTrue(Etapa.objects.filter(oculta=True).exists())
+
+    def test_conserva_lo_que_ya_estaba_leido(self):
+        libro = Item.objects.filter(tipo=Item.Tipo.LIBRO).first()
+        libro.alternar()
+
+        call_command("podar_catalogo", "--si", verbosity=0)
+
+        libro.refresh_from_db()
+        self.assertTrue(libro.completado)
+
+    def test_correrlo_dos_veces_no_rompe_nada(self):
+        call_command("podar_catalogo", "--si", verbosity=0)
+        libros = Item.objects.filter(tipo=Item.Tipo.LIBRO).count()
+
+        call_command("podar_catalogo", "--si", verbosity=0)
+
+        self.assertEqual(Item.objects.filter(tipo=Item.Tipo.LIBRO).count(), libros)

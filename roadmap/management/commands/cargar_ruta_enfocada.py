@@ -52,10 +52,6 @@ RUTA = [
             (E, "Template propio de proyecto ML", "", "Repo plantilla con estructura de carpetas, uv, Dockerfile, pytest, ruff y Makefile. Lo clonas en cada proyecto de aquí en adelante.", "", False, "https://cookiecutter-data-science.drivendata.org/"),
             (E, "Tu operación en una base Postgres", "", "Carga histórico real de fallas, horómetros y órdenes de trabajo. Todo lo que sigue se construye sobre estos datos, no sobre datasets de juguete.", "", False, ""),
             (N, "No estudies matemáticas 'por si acaso'", "", "Aprende el álgebra lineal que necesita el algoritmo que estás usando hoy, cuando lo estés usando. La ruta larga por teoría pura mata a la mayoría de los que se reconvierten.", "Método", False, ""),
-
-            (L, "The Pragmatic Programmer", "Hunt y Thomas", "Cómo piensa un ingeniero de software. Léelo ahora, no después: cambia cómo escribes todo lo demás.", "Oficio", True, OL + "The+Pragmatic+Programmer"),
-            (L, "Fluent Python", "Luciano Ramalho", "Python de verdad. Consúltalo por capítulos según lo que necesites, no de corrido.", "Python", True, OL + "Fluent+Python"),
-            (L, "Mathematics for Machine Learning", "Deisenroth, Faisal y Ong", "PDF gratuito. Referencia para consultar, no libro para leer entero.", "Matemáticas", True, "https://mml-book.github.io/"),
         ],
     },
     {
@@ -83,11 +79,6 @@ RUTA = [
             (E, "La matriz de confusión traducida a dólares", "", "Cuánto cuesta un falso negativo (falla no detectada) y cuánto un falso positivo (paro innecesario). Ese número define tu umbral, no el F1.", "", False, ""),
             (N, "Baseline tonto antes que modelo listo", "", "Escribe primero la regla heurística que ya usa mantenimiento. Si tu modelo no la supera, no tienes modelo — tienes un notebook.", "Método", False, ""),
             (N, "Validación temporal, siempre", "", "Entrenar con datos de junio y validar con datos de marzo es filtrar el futuro. Es el error que más proyectos de mantenimiento predictivo ha matado.", "Ojo", False, ""),
-
-            (L, "Hands-On Machine Learning", "Aurélien Géron", "El libro práctico de referencia. Si solo compras uno en esta etapa, es este.", "Referencia", True, OL + "Hands-On+Machine+Learning+Geron"),
-            (L, "An Introduction to Statistical Learning", "James, Witten, Hastie y Tibshirani", "PDF gratuito, con versión en Python. El rigor estadístico que evita que hagas tonterías.", "Estadística", True, "https://www.statlearning.com/"),
-            (L, "Interpretable Machine Learning", "Christoph Molnar", "Gratuito online. Obligatorio cuando tu predicción cuesta dinero real.", "Explicabilidad", True, "https://christophm.github.io/interpretable-ml-book/"),
-            (L, "Reliability-Centered Maintenance", "John Moubray", "El texto clásico de tu propio dominio. Es la mitad de tu ventaja competitiva.", "Confiabilidad", True, OL + "Reliability-Centered+Maintenance+Moubray"),
         ],
     },
     {
@@ -111,10 +102,6 @@ RUTA = [
             (E, "micrograd reescrito por ti", "", "El motor de autograd en 150 líneas, sin mirar el original. Si te sale, entendiste backpropagation de verdad.", "", False, "https://github.com/karpathy/micrograd"),
             (E, "Detector de anomalías de vibración en producción de mentira", "", "Autoencoder sobre señales sanas de tus equipos, con umbral calibrado y comparado contra un control estadístico clásico.", "", False, ""),
             (N, "Casi siempre gana el boosting", "", "En datos tabulares con pocos miles de filas, XGBoost le gana a una red neuronal. Usa deep learning para señales crudas, texto e imágenes; para el resto, no.", "Ojo", False, ""),
-
-            (L, "Understanding Deep Learning", "Simon J.D. Prince", "PDF gratuito con las mejores figuras del campo. Consúltalo por capítulo.", "Deep Learning", True, "https://udlbook.github.io/udlbook/"),
-            (L, "Deep Learning with PyTorch", "Stevens, Antiga y Viehmann", "Del equipo de PyTorch, PDF gratuito en el sitio oficial.", "PyTorch", True, "https://pytorch.org/assets/deep-learning/Deep-Learning-with-PyTorch.pdf"),
-            (L, "The Little Book of Deep Learning", "François Fleuret", "Todo el campo en 170 páginas de formato móvil. Para repasar.", "Referencia", True, "https://fleuret.org/francois/lbdl.html"),
         ],
     },
     {
@@ -143,11 +130,6 @@ RUTA = [
             (E, "Diagrama de arquitectura de una página", "", "De sensor a decisión: ingesta, features, entrenamiento, serving y monitoreo. Es lo que dibujarás en la pizarra de la entrevista.", "", False, ""),
             (N, "Shadow mode antes de producción", "", "El modelo nuevo corre en paralelo al viejo sin decidir nada durante dos semanas. Se compara. Después se promueve.", "Método", False, ""),
             (N, "Aquí está la diferencia de sueldo", "", "Miles de personas entrenan modelos. Las que los mantienen vivos en producción son muchas menos y cobran bastante más. No saltes esta etapa.", "Estrategia", False, ""),
-
-            (L, "Designing Machine Learning Systems", "Chip Huyen", "El libro que define el oficio. Si lees uno solo en toda la ruta, es este.", "ML Systems", True, "https://huyenchip.com/books/"),
-            (L, "Machine Learning Engineering", "Andriy Burkov", "Lectura libre en el sitio del autor. El proceso real de un proyecto, con los errores que nadie cuenta.", "ML Systems", True, "http://www.mlebook.com/wiki/doku.php"),
-            (L, "Designing Data-Intensive Applications", "Martin Kleppmann", "El libro de sistemas distribuidos. Lee los capítulos 1-4 y 11; el resto, cuando lo necesites.", "Sistemas", True, OL + "Designing+Data-Intensive+Applications"),
-            (L, "Site Reliability Engineering", "Google", "Gratuito online. Los capítulos de SLOs, monitoreo y postmortems aplican tal cual a modelos.", "SRE", True, "https://sre.google/sre-book/table-of-contents/"),
         ],
     },
     {
@@ -175,10 +157,6 @@ RUTA = [
             (E, "Reporte de costo por consulta", "", "API comercial contra modelo propio: costo por 1000 consultas, latencia p95 y calidad medida. Con una recomendación al final.", "", False, ""),
             (N, "RAG para hechos, fine-tuning para forma", "", "Si el modelo no sabe un dato, dale contexto; no lo entrenes. El fine-tuning es para tono, formato y jerga.", "Ojo", False, ""),
             (N, "El único benchmark que importa es el tuyo", "", "Que un modelo lidere una tabla pública no dice nada sobre tus manuales en español. Construye tu eval set antes de elegir modelo.", "Ojo", False, ""),
-
-            (L, "AI Engineering", "Chip Huyen", "El libro de referencia del rol: modelos fundacionales, evaluación, RAG, agentes y costos.", "AI Engineering", True, "https://huyenchip.com/books/"),
-            (L, "Build a Large Language Model (From Scratch)", "Sebastian Raschka", "Repo público con todo el código. Para entender qué hay dentro de la caja.", "LLMs", True, "https://github.com/rasbt/LLMs-from-scratch"),
-            (L, "Hands-On Large Language Models", "Alammar y Grootendorst", "Ilustrado y práctico, con notebooks abiertos.", "LLMs", True, "https://github.com/HandsOnLLM/Hands-On-Large-Language-Models"),
         ],
     },
     {
@@ -206,11 +184,6 @@ RUTA = [
             (N, "Verifica visas en las fuentes oficiales", "", "Los requisitos cambian seguido. Solo canada.ca e immi.homeaffairs.gov.au valen; nada de blogs de agencias.", "Ojo", False, "https://www.canada.ca/en/immigration-refugees-citizenship.html"),
             (N, "Especialízate en el cruce, no en el centro", "", "AI/ML Engineers genéricos hay miles. Que entiendan vibración, horómetros y confiabilidad, una decena. Ahí está tu precio.", "Estrategia", False, ""),
             (N, "Aplica antes de sentirte listo", "", "Las vacantes listan requisitos aspiracionales. Con el 60 % y proyectos demostrables ya pasas el filtro.", "Estrategia", False, ""),
-
-            (L, "The Culture Map", "Erin Meyer", "Cómo se trabaja y se negocia en otras culturas. Se nota en la entrevista.", "Cultura", True, OL + "The+Culture+Map+Erin+Meyer"),
-            (L, "Never Split the Difference", "Chris Voss", "Negociación de oferta. Una conversación de veinte minutos que vale miles al año.", "Negociación", True, OL + "Never+Split+the+Difference"),
-            (L, "The Software Engineer's Guidebook", "Gergely Orosz", "Cómo funcionan de verdad los niveles, las bandas y las promociones en tecnología.", "Carrera", True, OL + "The+Software+Engineer%27s+Guidebook"),
-            (L, "Deep Work", "Cal Newport", "Doce meses de estudio sostenido solo funcionan con bloques de concentración protegidos.", "Método", True, OL + "Deep+Work+Newport"),
         ],
     },
 ]
