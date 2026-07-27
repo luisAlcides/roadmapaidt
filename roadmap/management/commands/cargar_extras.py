@@ -22,6 +22,20 @@ EXTRAS_POR_ETAPA = {
     0: [
         (
             C,
+            "Introducción a Terminal y Línea de Comandos",
+            "Platzi",
+            "Dominio básico de shell (bash/zsh), variables de entorno y scripts de automatización simples.",
+            "Terminal",
+        ),
+        (
+            C,
+            "Estructuras de Datos y Algoritmos con Python",
+            "Platzi",
+            "Conceptos esenciales de Big O, listas ligadas, pilas y colas indispensables para entrevistas técnicas.",
+            "Algoritmos",
+        ),
+        (
+            C,
             "Introducción a Docker y Contenedores",
             "Platzi",
             "Entender la teoría básica detrás del aislamiento de procesos y sistemas de archivos antes de meterse con docker-compose.",
@@ -46,6 +60,14 @@ EXTRAS_POR_ETAPA = {
             "trabajo. Es lo que te va a diferenciar de cualquier candidato "
             "genérico, y lo escribes una sola vez.",
             "",
+        ),
+        (
+            L,
+            "Clean Code",
+            "Robert C. Martin",
+            "El libro de referencia para aprender a escribir código legible, estructurado y profesional.",
+            "Programación",
+            True,
         ),
         (
             L,
@@ -79,6 +101,20 @@ EXTRAS_POR_ETAPA = {
             "Documentación oficial",
             "Alternativas contemporáneas a Airflow enfocadas en tipado de datos y desarrollo local rápido.",
             "Orquestadores",
+        ),
+        (
+            C,
+            "Apache Kafka: Fundamentos y Arquitectura",
+            "Platzi",
+            "Conceptos básicos de mensajería asíncrona, productores, consumidores y diseño de tópicos streaming.",
+            "Streaming",
+        ),
+        (
+            C,
+            "Modelado de Datos Dimensionales (Kimball)",
+            "Udemy",
+            "Técnicas de modelado dimensional (hechos y dimensiones) necesarias para diseñar almacenes analíticos sólidos.",
+            "Modelado",
         ),
         (
             C,
@@ -118,6 +154,14 @@ EXTRAS_POR_ETAPA = {
             "Referencia",
             True,
         ),
+        (
+            L,
+            "Data Pipelines Pocket Reference",
+            "James Densmore",
+            "Guía práctica con patrones comunes para construir, monitorear y orquestar pipelines de datos en producción.",
+            "Pipelines",
+            True,
+        ),
     ],
     2: [
         (
@@ -140,6 +184,20 @@ EXTRAS_POR_ETAPA = {
             "Udemy",
             "Diseño y orquestación de flujos de trabajo de Machine Learning robustos sobre Kubernetes.",
             "MLOps",
+        ),
+        (
+            C,
+            "Álgebra Lineal y Cálculo para Machine Learning",
+            "Platzi",
+            "Las bases matemáticas del descenso de gradiente y algoritmos de optimización.",
+            "Matemáticas",
+        ),
+        (
+            C,
+            "Machine Learning Interpretability con Python",
+            "Udemy",
+            "Uso de SHAP y LIME para explicar decisiones del modelo de falla a los mecánicos y operadores.",
+            "Explicabilidad",
         ),
         (
             C,
@@ -179,6 +237,14 @@ EXTRAS_POR_ETAPA = {
             "con datos en la misma frase. Es la ventaja que ningún data scientist "
             "de bootcamp tiene.",
             "Dominio",
+            True,
+        ),
+        (
+            L,
+            "An Introduction to Statistical Learning",
+            "Gareth James et al.",
+            "Rigor matemático claro y accesible aplicado a regresión, clasificación y árboles de decisión.",
+            "Estadística",
             True,
         ),
     ],

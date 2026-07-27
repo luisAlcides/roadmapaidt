@@ -114,12 +114,12 @@
   .ficha b { display: block; font-size: 22px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
   .ficha span { font-size: 11.5px; color: var(--tenue); text-transform: uppercase; letter-spacing: .07em; }
 
-  /* ---------- Contenedor Layout Dos Columnas ---------- */
+  /* ---------- Contenedor Layout Tres Columnas ---------- */
   .contenedor-layout {
     max-width: 1200px; margin: 0 auto; padding: 0 24px 100px;
     display: grid; grid-template-columns: 1fr; gap: 36px;
   }
-  .columna-paralela {
+  .columna-paralela, .columna-libros {
     position: relative;
   }
   .seccion-paralela-tit {
@@ -133,11 +133,21 @@
   .nivel.nivel-paralelo::before { display: none !important; }
   .nivel.nivel-paralelo .nodo { display: none !important; }
 
-  @media (min-width: 900px) {
+  @media (min-width: 900px) and (max-width: 1200px) {
     .contenedor-layout {
       grid-template-columns: 1.6fr 1fr;
     }
-    .columna-paralela {
+    .columna-libros {
+      grid-column: 1 / -1; /* spans full width on medium screens */
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .contenedor-layout {
+      grid-template-columns: 1.8fr 1fr 1.2fr;
+      max-width: 1400px;
+    }
+    .columna-paralela, .columna-libros {
       position: sticky; top: 90px;
     }
   }
@@ -345,7 +355,7 @@
   <div class="fichas">
     <div class="ficha"><b>{{ etapas|length }}</b><span>Niveles</span></div>
     <div class="ficha"><b>{{ hechos }}/{{ total }}</b><span>Items</span></div>
-    <div class="ficha"><b>{{ libros_hechos }}/{{ libros_total }}</b><span>Libros</span></div>
+    <div class="ficha"><b id="g-libros-cifras">{{ libros_hechos }}/{{ libros_total }}</b><span>Libros</span></div>
     <div class="ficha"><b>{{ porcentaje }} %</b><span>Progreso</span></div>
   </div>
 </section>
@@ -381,6 +391,7 @@
 
         {% regroup etapa.items.all by tipo as grupos %}
         {% for grupo in grupos %}
+          {% if grupo.grouper != 'libro' %}
           <p class="grupo-tit">{{ grupo.list.0.get_tipo_display|titulo_grupo }}</p>
           {% for item in grupo.list %}
           <div class="item {{ item.tipo }} {% if item.completado %}ok{% endif %}" data-item="{{ item.pk }}">
@@ -405,15 +416,18 @@
             </form>
           </div>
           {% endfor %}
+          {% endif %}
         {% endfor %}
 
         <details class="agregar">
           <summary>Agregar algo a esta etapa</summary>
           <form class="nuevo" method="post" action="{% url 'crear_item' etapa.pk %}">
             {% csrf_token %}
-            <input class="ancho" type="text" name="titulo" placeholder="Título — curso, libro, entregable…" required>
+            <input class="ancho" type="text" name="titulo" placeholder="Título — curso, entregable, nota…" required>
             <select name="tipo">
-              {% for valor, nombre in tipos %}<option value="{{ valor }}">{{ nombre }}</option>{% endfor %}
+              <option value="curso">Curso</option>
+              <option value="entregable">Entregable</option>
+              <option value="nota">Nota</option>
             </select>
             <input type="text" name="fuente" placeholder="Platzi, Udemy, autor…">
             <textarea class="ancho" name="detalle" placeholder="Nota o detalle (opcional)"></textarea>
@@ -478,6 +492,7 @@
 
         {% regroup etapa.items.all by tipo as grupos %}
         {% for grupo in grupos %}
+          {% if grupo.grouper != 'libro' %}
           <p class="grupo-tit">{{ grupo.list.0.get_tipo_display|titulo_grupo }}</p>
           {% for item in grupo.list %}
           <div class="item {{ item.tipo }} {% if item.completado %}ok{% endif %}" data-item="{{ item.pk }}">
@@ -502,15 +517,18 @@
             </form>
           </div>
           {% endfor %}
+          {% endif %}
         {% endfor %}
 
         <details class="agregar">
           <summary>Agregar algo a esta etapa</summary>
           <form class="nuevo" method="post" action="{% url 'crear_item' etapa.pk %}">
             {% csrf_token %}
-            <input class="ancho" type="text" name="titulo" placeholder="Título — curso, libro, entregable…" required>
+            <input class="ancho" type="text" name="titulo" placeholder="Título — curso, entregable, nota…" required>
             <select name="tipo">
-              {% for valor, nombre in tipos %}<option value="{{ valor }}">{{ nombre }}</option>{% endfor %}
+              <option value="curso">Curso</option>
+              <option value="entregable">Entregable</option>
+              <option value="nota">Nota</option>
             </select>
             <input type="text" name="fuente" placeholder="Platzi, Udemy, autor…">
             <textarea class="ancho" name="detalle" placeholder="Nota o detalle (opcional)"></textarea>
@@ -521,6 +539,76 @@
     </div>
     {% endif %}
     {% endfor %}
+  </aside>
+
+  <aside class="columna-libros">
+    <div class="seccion-paralela-tit">
+      <span>📚</span> Biblioteca · Lectura
+    </div>
+    <div class="nivel nivel-paralelo" style="--nivel-color: var(--acento)">
+      <div class="nodo" style="display: none;"></div>
+      <article class="tarjeta">
+        <div class="tarjeta-cab" style="background: color-mix(in srgb, var(--acento) 4%, transparent);">
+          <p class="kicker">Todos los niveles</p>
+          <h2>Libros de la ruta</h2>
+          <div class="meta" style="margin-top: 6px;">
+            <span>Leídos</span>
+            <b><span class="libros-hechos-span">{{ libros_hechos }}</span>/<span class="libros-total-span">{{ libros_total }}</span></b>
+          </div>
+          <div class="medidor" style="height: 6px; margin-top: 10px;">
+            <i class="libros-barra-i" style="display: block; height: 100%; width: {{ libros_porcentaje }}%; background: var(--acento); transition: width 0.3s;"></i>
+          </div>
+        </div>
+
+        {% for item in libros_lista %}
+        <div class="item {{ item.tipo }} {% if item.completado %}ok{% endif %}" data-item="{{ item.pk }}" style="border-top: 1px solid color-mix(in srgb, var(--linea) 55%, transparent);">
+          <button class="caja" type="button" aria-label="Marcar «{{ item.titulo }}»"
+                  aria-pressed="{{ item.completado|yesno:'true,false' }}">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+          <div class="cuerpo">
+            <div class="titulo">
+              <span class="etiqueta" style="border-color: {{ item.etapa.color }}; color: {{ item.etapa.color }}; background: color-mix(in srgb, {{ item.etapa.color }} 8%, transparent); font-size: 9px; padding: 0 5px; margin-right: 5px; vertical-align: middle;">
+                {{ item.etapa.kicker }}
+              </span>
+              {{ item.titulo }}
+              {% if item.fuente %}<span class="fuente">— {{ item.fuente }}</span>{% endif %}
+            </div>
+            {% if item.detalle %}<p class="detalle">{{ item.detalle }}</p>{% endif %}
+          </div>
+          <form method="post" action="{% url 'borrar_item' item.pk %}"
+                onsubmit="return confirm('¿Borrar «{{ item.titulo|escapejs }}»?')">
+            {% csrf_token %}
+            <button class="borrar" type="submit" aria-label="Borrar libro">×</button>
+          </form>
+        </div>
+        {% empty %}
+        <p style="padding: 24px; color: var(--tinta-suave); text-align: center; font-size: 14px;">
+          No hay libros agregados en la biblioteca todavía.
+        </p>
+        {% endfor %}
+
+        <details class="agregar" style="border-top: 1px solid var(--linea);">
+          <summary>Agregar un libro</summary>
+          <form class="nuevo" method="post" action="{% url 'crear_item_global' %}">
+            {% csrf_token %}
+            <input type="hidden" name="tipo" value="libro">
+            <input class="ancho" type="text" name="titulo" placeholder="Título del libro..." required>
+            <input type="text" name="fuente" placeholder="Autor / Fuente..." required>
+            
+            <select name="etapa_pk" required style="width: 100%;">
+              <option value="" disabled selected>Selecciona el nivel/etapa...</option>
+              {% for e in etapas %}
+                <option value="{{ e.pk }}">{{ e.orden }} · {{ e.titulo }}</option>
+              {% endfor %}
+            </select>
+            
+            <textarea class="ancho" name="detalle" placeholder="Nota o por qué leerlo (opcional)"></textarea>
+            <button class="enviar" type="submit">Agregar Libro</button>
+          </form>
+        </details>
+      </article>
+    </div>
   </aside>
 </div>
 
@@ -551,21 +639,40 @@ document.querySelectorAll('.caja').forEach(caja => {
       item.classList.toggle('ok', d.completado);
       caja.setAttribute('aria-pressed', d.completado);
 
-      nivel.querySelector('.e-barra').style.width = d.etapa_porcentaje + '%';
-      nivel.querySelector('.e-hechos').textContent = d.etapa_hechos;
-      nivel.classList.toggle('hecha', d.etapa_completa);
-      nivel.classList.toggle('activa', !d.etapa_completa && d.etapa_hechos > 0);
-      
-      const numero = nivel.querySelector('.numero');
-      const marca = nivel.querySelector('.marca');
-      if (numero && marca) {
-        numero.hidden = d.etapa_completa;
-        marca.hidden = !d.etapa_completa;
+      // Si el item pertenece a una tarjeta de etapa, actualizarla
+      if (nivel && nivel.querySelector('.e-barra')) {
+        nivel.querySelector('.e-barra').style.width = d.etapa_porcentaje + '%';
+        nivel.querySelector('.e-hechos').textContent = d.etapa_hechos;
+        nivel.classList.toggle('hecha', d.etapa_completa);
+        nivel.classList.toggle('activa', !d.etapa_completa && d.etapa_hechos > 0);
+        
+        const numero = nivel.querySelector('.numero');
+        const marca = nivel.querySelector('.marca');
+        if (numero && marca) {
+          numero.hidden = d.etapa_completa;
+          marca.hidden = !d.etapa_completa;
+        }
       }
 
+      // Actualizar progreso global de items
       document.getElementById('g-hechos').textContent = d.global_hechos;
       document.getElementById('g-pct').textContent = d.global_porcentaje + ' %';
       document.getElementById('g-barra').style.width = d.global_porcentaje + '%';
+
+      // Actualizar cifras globales y locales de libros
+      const gLibrosCifras = document.getElementById('g-libros-cifras');
+      if (gLibrosCifras) {
+        gLibrosCifras.textContent = d.libros_hechos + '/' + d.libros_total;
+      }
+
+      const librosHechosSpans = document.querySelectorAll('.libros-hechos-span');
+      const librosTotalSpans = document.querySelectorAll('.libros-total-span');
+      const librosBarras = document.querySelectorAll('.libros-barra-i');
+      
+      librosHechosSpans.forEach(el => el.textContent = d.libros_hechos);
+      librosTotalSpans.forEach(el => el.textContent = d.libros_total);
+      librosBarras.forEach(el => el.style.width = d.libros_porcentaje + '%');
+      
     } catch (e) {
       item.classList.toggle('ok');  // revertir si el servidor falló
       console.error('No se pudo guardar el cambio:', e);

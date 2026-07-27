@@ -16,6 +16,8 @@ def index(request):
     total = Item.objects.count()
     hechos = Item.objects.filter(completado=True).count()
     libros = Item.objects.filter(tipo=Item.Tipo.LIBRO)
+    libros_count = libros.count()
+    libros_hechos_count = libros.filter(completado=True).count()
 
     contexto = {
         "etapas": etapas,
@@ -23,8 +25,10 @@ def index(request):
         "hechos": hechos,
         "porcentaje": round(hechos * 100 / total) if total else 0,
         "tipos": Item.Tipo.choices,
-        "libros_total": libros.count(),
-        "libros_hechos": libros.filter(completado=True).count(),
+        "libros_total": libros_count,
+        "libros_hechos": libros_hechos_count,
+        "libros_porcentaje": round(libros_hechos_count * 100 / libros_count) if libros_count else 0,
+        "libros_lista": libros.select_related("etapa"),
     }
     return render(request, "roadmap/index.html", contexto)
 
@@ -39,6 +43,10 @@ def alternar_item(request, pk):
     if request.headers.get("x-requested-with") == "fetch":
         total = Item.objects.count()
         hechos = Item.objects.filter(completado=True).count()
+        libros = Item.objects.filter(tipo=Item.Tipo.LIBRO)
+        libros_count = libros.count()
+        libros_hechos_count = libros.filter(completado=True).count()
+
         return JsonResponse(
             {
                 "completado": completado,
@@ -50,6 +58,9 @@ def alternar_item(request, pk):
                 "global_hechos": hechos,
                 "global_total": total,
                 "global_porcentaje": round(hechos * 100 / total) if total else 0,
+                "libros_hechos": libros_hechos_count,
+                "libros_total": libros_count,
+                "libros_porcentaje": round(libros_hechos_count * 100 / libros_count) if libros_count else 0,
             }
         )
     return redirect("index")
@@ -96,6 +107,27 @@ def crear_etapa(request):
             objetivo=request.POST.get("objetivo", "").strip(),
             duracion=request.POST.get("duracion", "").strip(),
             color=request.POST.get("color") or "#c2703d",
+        )
+    return redirect("index")
+
+
+@login_required
+@require_POST
+def crear_item_global(request):
+    etapa_pk = request.POST.get("etapa_pk")
+    etapa = get_object_or_404(Etapa, pk=etapa_pk)
+    titulo = request.POST.get("titulo", "").strip()
+
+    if titulo:
+        ultimo = etapa.items.order_by("-orden").first()
+        Item.objects.create(
+            etapa=etapa,
+            titulo=titulo,
+            tipo=request.POST.get("tipo") or Item.Tipo.LIBRO,
+            fuente=request.POST.get("fuente", "").strip(),
+            detalle=request.POST.get("detalle", "").strip(),
+            orden=(ultimo.orden + 1) if ultimo else 0,
+            generado=True,
         )
     return redirect("index")
 
