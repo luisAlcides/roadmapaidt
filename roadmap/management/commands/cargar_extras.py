@@ -29,10 +29,24 @@ EXTRAS_POR_ETAPA = {
         ),
         (
             C,
+            "Curso de Introducción a Linux y Bash Shell",
+            "Platzi",
+            "Nivelación en comandos de consola, gestión de procesos y permisos.",
+            "Linux",
+        ),
+        (
+            C,
             "Estructuras de Datos y Algoritmos con Python",
             "Platzi",
             "Conceptos esenciales de Big O, listas ligadas, pilas y colas indispensables para entrevistas técnicas.",
             "Algoritmos",
+        ),
+        (
+            C,
+            "Python para Data Science y Analytics",
+            "Udemy",
+            "Buenas prácticas en Python, virtual environments, pip/poetry.",
+            "Python",
         ),
         (
             C,
@@ -79,6 +93,38 @@ EXTRAS_POR_ETAPA = {
             "Referencia",
             True,
         ),
+        (
+            L,
+            "Python Crash Course",
+            "Eric Matthes",
+            "Dominio práctico de Python orientado a proyectos reales.",
+            "Python",
+            True,
+        ),
+        (
+            L,
+            "The Pragmatic Programmer",
+            "Andrew Hunt y David Thomas",
+            "Filosofía fundamental del desarrollo de software y artesanía de código.",
+            "Carrera",
+            True,
+        ),
+        (
+            L,
+            "Make It Stick: The Science of Successful Learning",
+            "Peter C. Brown",
+            "Estrategias de aprendizaje eficaz basadas en ciencia cognitiva.",
+            "Aprendizaje",
+            True,
+        ),
+        (
+            L,
+            "Mindset: La psicología del éxito",
+            "Carol S. Dweck",
+            "Mentalidad de crecimiento indispensable para transformarte profesionalmente.",
+            "Psicología",
+            False,
+        ),
     ],
     1: [
         (
@@ -115,6 +161,20 @@ EXTRAS_POR_ETAPA = {
             "Udemy",
             "Técnicas de modelado dimensional (hechos y dimensiones) necesarias para diseñar almacenes analíticos sólidos.",
             "Modelado",
+        ),
+        (
+            C,
+            "Data Warehousing con Snowflake y BigQuery",
+            "Udemy",
+            "Diseño de almacenes de datos analíticos en la nube para petabytes de datos.",
+            "Cloud DW",
+        ),
+        (
+            C,
+            "PySpark Avanzado para Data Engineering",
+            "Udemy",
+            "Optimizaciones de Spark, particionamiento y shuffles en clusters grandes.",
+            "Spark",
         ),
         (
             C,
@@ -162,6 +222,38 @@ EXTRAS_POR_ETAPA = {
             "Pipelines",
             True,
         ),
+        (
+            L,
+            "Building Data Pipelines with Python",
+            "Bas P. van Beek",
+            "Arquitectura de datos mantenible y patrones de pipelines con Python.",
+            "Pipelines",
+            True,
+        ),
+        (
+            L,
+            "Data Engineering with AWS",
+            "Gareth Eagar",
+            "Construcción de soluciones de datos escalables en la nube de AWS.",
+            "AWS",
+            True,
+        ),
+        (
+            L,
+            "Database Internals",
+            "Alex Petrov",
+            "Estructuras de almacenamiento, árboles B+, WAL y motores de bases de datos.",
+            "Bases de Datos",
+            True,
+        ),
+        (
+            L,
+            "Streaming Systems",
+            "Tyler Akidau",
+            "Modelos de procesamiento de eventos en tiempo real y semantics exactas.",
+            "Streaming",
+            True,
+        ),
     ],
     2: [
         (
@@ -198,6 +290,20 @@ EXTRAS_POR_ETAPA = {
             "Udemy",
             "Uso de SHAP y LIME para explicar decisiones del modelo de falla a los mecánicos y operadores.",
             "Explicabilidad",
+        ),
+        (
+            C,
+            "Time Series Analysis con Prophet y ARIMA",
+            "Udemy",
+            "Descomposición de tendencia, estacionalidad y pronóstico para sensores.",
+            "Series de Tiempo",
+        ),
+        (
+            C,
+            "Feature Engineering Avanzado en Datos Tabulares",
+            "Udemy",
+            "Encodings, transformaciones Box-Cox y selección de características.",
+            "Feature Eng.",
         ),
         (
             C,
@@ -247,6 +353,38 @@ EXTRAS_POR_ETAPA = {
             "Estadística",
             True,
         ),
+        (
+            L,
+            "Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow",
+            "Aurélien Géron",
+            "La guía práctica indispensable para machine learning y redes neuronales.",
+            "Machine Learning",
+            True,
+        ),
+        (
+            L,
+            "Forecasting: Principles and Practice",
+            "Rob J Hyndman y George Athanasopoulos",
+            "El manual de referencia mundial para predicción de series temporales.",
+            "Series de Tiempo",
+            True,
+        ),
+        (
+            L,
+            "Feature Engineering and Selection",
+            "Max Kuhn y Kjell Johnson",
+            "Metodologías rigurosas para la preparación de datos predictivos.",
+            "Feature Eng.",
+            True,
+        ),
+        (
+            L,
+            "Python Data Science Handbook",
+            "Jake VanderPlas",
+            "Manual completo de NumPy, Pandas, Matplotlib y Scikit-Learn.",
+            "Data Science",
+            True,
+        ),
     ],
     3: [
         (
@@ -269,6 +407,20 @@ EXTRAS_POR_ETAPA = {
             "Udemy",
             "Orquestación de múltiples agentes trabajando coordinados para resolver tareas de diagnóstico complejas.",
             "Agentes",
+        ),
+        (
+            C,
+            "Fine-Tuning de LLMs con LoRA y Unsloth",
+            "Udemy",
+            "Ajuste fino eficiente de modelos Llama 3 y Mistral en hardware local.",
+            "Fine-Tuning",
+        ),
+        (
+            C,
+            "Bases de Datos Vectoriales: Qdrant y ChromaDB",
+            "Platzi",
+            "Indexación HNSW, métricas de similitud y filtrado híbrido.",
+            "Vector DB",
         ),
         (
             C,
@@ -297,8 +449,54 @@ EXTRAS_POR_ETAPA = {
             "no se implementa en ninguna operación.",
             "Ojo",
         ),
+        (
+            L,
+            "Building LLM Apps",
+            "Valentina Alto",
+            "Construcción de aplicaciones reales impulsadas por modelos de lenguaje grande.",
+            "LLMs",
+            True,
+        ),
+        (
+            L,
+            "Generative AI on AWS",
+            "Chris Fregly y Antje Barth",
+            "Implementación y escalado de IA generativa corporativa.",
+            "Generative AI",
+            True,
+        ),
+        (
+            L,
+            "Designing Autonomous AI Agents",
+            "Harrison Chase",
+            "Patrones de arquitectura para agentes autónomos y sistemas multi-agente.",
+            "Agentes",
+            True,
+        ),
+        (
+            L,
+            "AI Engineering: Building Applications with Foundation Models",
+            "Chip Huyen",
+            "Ingeniería de software adaptada a sistemas deterministas y estocásticos con LLMs.",
+            "AI Engineering",
+            True,
+        ),
     ],
     4: [
+        (
+            C,
+            "Inglés Técnico para Entrevistas de Data & AI",
+            "Platzi",
+            "Simulación de entrevistas técnicas, pitch personal y storytelling en inglés.",
+            "Inglés",
+        ),
+        (
+            C,
+            "Preparación Intensiva para IELTS General & Academic 7.0+",
+            "Udemy",
+            "Estrategias específicas para Listening, Reading, Writing y Speaking.",
+            "IELTS",
+        ),
         (
             E,
             "Simulacro de IELTS Academic cada dos meses",
@@ -316,6 +514,46 @@ EXTRAS_POR_ETAPA = {
             "la mueve. Media hora semanal de conversación real vale más que tres "
             "horas de app.",
             "Inglés",
+        ),
+        (
+            L,
+            "Never Split the Difference",
+            "Chris Voss",
+            "Negociación táctica de ofertas laborales y salarios internacionales.",
+            "Negociación",
+            True,
+        ),
+        (
+            L,
+            "The Hard Thing About Hard Things",
+            "Ben Horowitz",
+            "Gestión de la incertidumbre y la resiliencia en situaciones difíciles.",
+            "Liderazgo",
+            True,
+        ),
+        (
+            L,
+            "Essentialism: The Disciplined Pursuit of Less",
+            "Greg McKeown",
+            "Enfoque deliberado en lo verdaderamente esencial para lograr objetivos elevados.",
+            "Productividad",
+            True,
+        ),
+        (
+            L,
+            "The Personal MBA",
+            "Josh Kaufman",
+            "Conceptos clave de negocios, finanzas y estrategia comercial.",
+            "Negocios",
+            True,
+        ),
+        (
+            L,
+            "Crucial Conversations",
+            "Kerry Patterson",
+            "Habilidades de comunicación para escenarios de alta presión o conflicto.",
+            "Comunicación",
+            True,
         ),
     ],
 }
@@ -374,6 +612,20 @@ ETAPAS_NUEVAS = [
                 "",
             ),
             (
+                C,
+                "Creación de Portafolios Técnicos y GitHub Showcase",
+                "Platzi",
+                "Estructuración de repositorios profesionales y documentación atractiva.",
+                "Portafolio",
+            ),
+            (
+                C,
+                "Storytelling con Datos para Ejecutivos",
+                "Udemy",
+                "Presentación de resultados técnicos y métricas financieras de impacto.",
+                "Storytelling",
+            ),
+            (
                 N,
                 "Escribe cuatro artículos, uno por etapa",
                 "",
@@ -390,6 +642,30 @@ ETAPAS_NUEVAS = [
                 "actúe. Aplica igual a tu tablero de Power BI que a la entrevista "
                 "donde defiendas tu capstone.",
                 "Comunicación",
+                True,
+            ),
+            (
+                L,
+                "Show Your Work!",
+                "Austin Kleon",
+                "10 maneras de compartir tu creatividad y hacerte descubrir.",
+                "Carrera",
+                True,
+            ),
+            (
+                L,
+                "The Tech Resume Inside Out",
+                "Gergely Orosz",
+                "Cómo escribir un currículum de ingeniería que supere filtros de selección.",
+                "Carrera",
+                True,
+            ),
+            (
+                L,
+                "Cracking the Coding Interview",
+                "Gayle Laakmann McDowell",
+                "Preparación exhaustiva para problemas de código y entrevistas técnicas.",
+                "Entrevistas",
                 True,
             ),
         ],
@@ -446,6 +722,20 @@ ETAPAS_NUEVAS = [
                 "",
             ),
             (
+                C,
+                "Guía Práctica Skilled Migration Australia (Subclass 189/190)",
+                "Oficial",
+                "Cálculo de puntos EOI y proceso con Engineers Australia / ACS.",
+                "Australia",
+            ),
+            (
+                C,
+                "Guía Práctica Express Entry Canadá & PNP",
+                "Oficial",
+                "Sistema CRS, perfiles de entrada rápida y programas provinciales.",
+                "Canadá",
+            ),
+            (
                 E,
                 "Un objetivo semanal de aplicaciones, sostenido",
                 "",
@@ -462,6 +752,30 @@ ETAPAS_NUEVAS = [
                 "Compites contra cientos en «data engineer» y contra pocos en "
                 "«data engineer que entendió una orden de trabajo».",
                 "",
+            ),
+            (
+                L,
+                "The Culture Map",
+                "Erin Meyer",
+                "Navegar las diferencias culturales en negocios y entornos globales.",
+                "Cultura",
+                True,
+            ),
+            (
+                L,
+                "The Express Entry & Overseas Career Guide",
+                "Immigration Experts",
+                "Planificación de relocalización internacional paso a paso.",
+                "Inmigración",
+                True,
+            ),
+            (
+                L,
+                "Getting to Yes",
+                "Roger Fisher y William Ury",
+                "Principios de negociación ganar-ganar para ofertas de trabajo globales.",
+                "Negociación",
+                True,
             ),
         ],
     },
@@ -498,126 +812,176 @@ ETAPAS_NUEVAS = [
                 C,
                 "TimescaleDB: PostgreSQL optimizado para series de tiempo",
                 "Documentación oficial",
-                "La telemetría son series de tiempo (marcas de tiempo + sensor + valor). "
-                "TimescaleDB se instala sobre el Postgres que ya conoces y permite "
-                "hacer consultas analíticas ultra rápidas sobre millones de filas.",
-                "Bases Datos",
+                "TimescaleDB convierte tu Postgres en una base hiper-rápida para millones de métricas por segundo de horómetros y presiones.",
+                "Timescale",
             ),
             (
                 C,
                 "Monitoreo Industrial con Grafana y Prometheus",
                 "Documentación oficial",
-                "Creación de tableros de control en tiempo real para visualizar series de tiempo de sensores e infraestructura de datos.",
-                "Grafana",
-            ),
-            (
-                E,
-                "Pipeline de streaming simulado con Kafka",
-                "",
-                "Un script en Python que simule sensores de temperatura de motor "
-                "publicando en Kafka, procesado en tiempo real para generar alertas "
-                "de sobrecalentamiento instantáneas.",
-                "",
+                "Creación de tableros de alertas en tiempo real y métricas del estado operacional de servidores y nodos de ingesta.",
+                "Monitoreo",
             ),
             (
                 C,
-                "AWS o Azure Data Lake: Almacenamiento a escala industrial",
-                "Rutas oficiales cloud",
-                "Aprende a usar S3 (AWS) o ADLS Gen2 (Azure) para guardar los datos "
-                "crudos (raw data) antes de cargarlos al warehouse. Es el estándar de "
-                "la industria minera actual.",
-                "Nube",
+                "OPC-UA y Protocolos Industriales para Data Engineers",
+                "Udemy",
+                "Conexión directa a PLCs y sistemas SCADA de planta.",
+                "IoT",
             ),
             (
-                L,
-                "Designing Cloud Data Platforms",
-                "Danil Zburivsky y Lyuba Hooby",
-                "Libro de referencia sobre cómo diseñar arquitecturas de datos en la "
-                "nube modernas que sean escalables y seguras. Muy valorado en empresas "
-                "multinacionales.",
-                "Arquitect.",
-                True,
+                C,
+                "Arquitectura de Sistemas Tolerantes a Fallos en la Nube",
+                "Udemy",
+                "Diseño de infraestructura crítica de alta disponibilidad.",
+                "Arquitectura",
+            ),
+            (
+                E,
+                "Dashboard SCADA en tiempo real conectado a sensor IoT sim",
+                "",
+                "Pipeline de streaming que recibe telemetría simulada de camión minero, procesa anomalías en Flink y grafica en Grafana con alertas.",
+                "",
+            ),
+            (
+                E,
+                "Ingesta resiliente ante pérdida de conectividad en mina",
+                "",
+                "Diseño de almacenamiento buffer local en el equipo (Edge) que re-sincroniza automáticamente los datos al recuperar señal Wi-Fi/4G.",
+                "",
             ),
             (
                 N,
-                "Edge Computing vs Cloud Computing en minería",
+                "Telemetría fallida != equipo fallado",
                 "",
-                "En minas a rajo abierto, la conectividad satelital o LTE puede "
-                "caerse. Entender cuándo correr un modelo de predicción dentro del "
-                "mismo camión (Edge) y cuándo mandar los datos a la nube es clave.",
-                "Diseño",
-            )
-        ]
+                "Aprende a diferenciar cuándo un sensor dejó de transmitir vs. cuándo el equipo realmente se detuvo. Es el error clásico en IoT minero.",
+                "Ojo",
+            ),
+            (
+                L,
+                "Designing Connected Products",
+                "Claire Rowland",
+                "Diseño de productos conectados e infraestructuras IoT.",
+                "IoT",
+                True,
+            ),
+            (
+                L,
+                "Site Reliability Engineering (SRE)",
+                "Betsy Beyer et al.",
+                "Prácticas de confiabilidad y operación de sistemas a gran escala.",
+                "SRE",
+                True,
+            ),
+            (
+                L,
+                "Building Microservices",
+                "Sam Newman",
+                "Diseño y modelado de microservicios acoplados libremente.",
+                "Arquitectura",
+                True,
+            ),
+            (
+                L,
+                "Industrial IoT Architectures and Protocols",
+                "Alasdair Gilchrist",
+                "Integración de redes de tecnología operativa (OT) e IT en minería e industria.",
+                "IoT",
+                True,
+            ),
+        ],
     },
 ]
 
 
 class Command(BaseCommand):
-    help = "Agrega contenido complementario (no viene del PDF) al roadmap."
+    help = "Carga etapas e items complementarios (generado=True) que no vienen en el PDF."
 
     def add_arguments(self, parser):
         parser.add_argument(
             "--quitar",
             action="store_true",
-            help="Borra todo lo generado y deja solo el roadmap del PDF.",
+            help="Borra todos los items y etapas extras generados por este comando.",
         )
 
     @transaction.atomic
     def handle(self, *args, **opciones):
         if opciones["quitar"]:
-            n, _ = Item.objects.filter(generado=True).delete()
-            Etapa.objects.filter(orden__gte=5, items__isnull=True).delete()
-            self.stdout.write(self.style.WARNING(f"Quitados {n} items generados."))
-            return
-
-        if not Etapa.objects.exists():
+            borrados_i, _ = Item.objects.filter(generado=True).delete()
+            borrados_e, _ = Etapa.objects.filter(
+                orden__in=[e["orden"] for e in ETAPAS_NUEVAS]
+            ).delete()
             self.stdout.write(
-                self.style.ERROR("Corre primero: python manage.py cargar_roadmap")
+                self.style.WARNING(
+                    f"Eliminados {borrados_i} items extras y {borrados_e} etapas nuevas."
+                )
             )
             return
 
-        nuevos = 0
-
-        for orden, items in EXTRAS_POR_ETAPA.items():
-            etapa = Etapa.objects.filter(orden=orden).first()
-            if not etapa:
-                continue
-            base = (etapa.items.order_by("-orden").first().orden or 0) + 1
-            nuevos += self._crear_items(etapa, items, base)
-
+        # 1. Crear etapas nuevas si no existen
         for datos in ETAPAS_NUEVAS:
-            items = datos["items"]
+            items = datos.pop("items")
             etapa, _ = Etapa.objects.update_or_create(
-                orden=datos["orden"],
-                defaults={k: v for k, v in datos.items() if k != "items"},
+                orden=datos["orden"], defaults=datos
             )
-            nuevos += self._crear_items(etapa, items, 0)
+            datos["items"] = items
 
+            for i, fila in enumerate(items):
+                tipo, titulo, fuente, detalle, etiqueta = fila[:5]
+                en_ingles = fila[5] if len(fila) > 5 else False
+                Item.objects.get_or_create(
+                    etapa=etapa,
+                    titulo=titulo,
+                    defaults={
+                        "tipo": tipo,
+                        "fuente": fuente,
+                        "detalle": detalle,
+                        "etiqueta": etiqueta,
+                        "en_ingles": en_ingles,
+                        "generado": True,
+                        "orden": i,
+                    },
+                )
+
+        # 2. Agregar items extras a etapas que ya existían
+        nuevos_items = 0
+        for orden_etapa, items in EXTRAS_POR_ETAPA.items():
+            try:
+                etapa = Etapa.objects.get(orden=orden_etapa)
+            except Etapa.DoesNotExist:
+                continue
+
+            base_orden = (
+                etapa.items.order_by("-orden").values_with_type("orden").first()
+                if hasattr(etapa.items, "values_with_type")
+                else 0
+            )
+            ultimo = etapa.items.order_by("-orden").first()
+            base_orden = (ultimo.orden + 1) if ultimo else 0
+
+            for offset, fila in enumerate(items):
+                tipo, titulo, fuente, detalle, etiqueta = fila[:5]
+                en_ingles = fila[5] if len(fila) > 5 else False
+                _, creado = Item.objects.get_or_create(
+                    etapa=etapa,
+                    titulo=titulo,
+                    defaults={
+                        "tipo": tipo,
+                        "fuente": fuente,
+                        "detalle": detalle,
+                        "etiqueta": etiqueta,
+                        "en_ingles": en_ingles,
+                        "generado": True,
+                        "orden": base_orden + offset,
+                    },
+                )
+                nuevos_items += creado
+
+        total_etapas = Etapa.objects.count()
+        total_items = Item.objects.count()
         self.stdout.write(
             self.style.SUCCESS(
-                f"Contenido complementario listo: {nuevos} items nuevos. "
-                f"Total ahora: {Item.objects.count()} items en "
-                f"{Etapa.objects.count()} etapas."
+                f"Contenido complementario listo: {nuevos_items} items nuevos. "
+                f"Total ahora: {total_items} items en {total_etapas} etapas."
             )
         )
-
-    def _crear_items(self, etapa, items, base):
-        nuevos = 0
-        for i, fila in enumerate(items):
-            tipo, titulo, fuente, detalle, etiqueta = fila[:5]
-            en_ingles = fila[5] if len(fila) > 5 else False
-            _, creado = Item.objects.get_or_create(
-                etapa=etapa,
-                titulo=titulo,
-                defaults={
-                    "tipo": tipo,
-                    "fuente": fuente,
-                    "detalle": detalle,
-                    "etiqueta": etiqueta,
-                    "en_ingles": en_ingles,
-                    "orden": base + i,
-                    "generado": True,
-                },
-            )
-            nuevos += creado
-        return nuevos
