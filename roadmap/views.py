@@ -79,6 +79,7 @@ def crear_item(request, etapa_pk):
             titulo=titulo,
             tipo=request.POST.get("tipo") or Item.Tipo.CURSO,
             fuente=request.POST.get("fuente", "").strip(),
+            url=request.POST.get("url", "").strip(),
             detalle=request.POST.get("detalle", "").strip(),
             orden=(ultimo.orden + 1) if ultimo else 0,
         )
@@ -125,6 +126,7 @@ def crear_item_global(request):
             titulo=titulo,
             tipo=request.POST.get("tipo") or Item.Tipo.LIBRO,
             fuente=request.POST.get("fuente", "").strip(),
+            url=request.POST.get("url", "").strip(),
             detalle=request.POST.get("detalle", "").strip(),
             orden=(ultimo.orden + 1) if ultimo else 0,
             generado=True,

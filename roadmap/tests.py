@@ -155,3 +155,59 @@ class CargarExtrasTests(TestCase):
         Etapa.objects.all().delete()
         call_command("cargar_extras", verbosity=0)
         self.assertEqual(Item.objects.count(), 0)
+
+
+class CargarAiMlTests(TestCase):
+    def setUp(self):
+        call_command("cargar_roadmap", verbosity=0)
+
+    def test_agrega_cuatro_etapas_y_marca_todo_como_generado(self):
+        call_command("cargar_ai_ml", verbosity=0)
+
+        self.assertEqual(Etapa.objects.count(), 9)
+        self.assertEqual(Item.objects.filter(generado=False).count(), 65)
+        for orden in (8, 9, 10, 11):
+            self.assertTrue(Etapa.objects.get(orden=orden).items.exists())
+
+    def test_casi_todo_trae_enlace_directo(self):
+        call_command("cargar_ai_ml", verbosity=0)
+
+        generados = Item.objects.filter(generado=True)
+        con_url = generados.exclude(url="")
+        # Los entregables y notas propias no tienen a dónde apuntar; el resto sí.
+        self.assertGreater(con_url.count(), generados.count() * 0.8)
+        self.assertFalse(
+            con_url.exclude(url__startswith="http").exists(),
+            "todas las urls deben ser absolutas",
+        )
+
+    def test_es_idempotente(self):
+        call_command("cargar_ai_ml", verbosity=0)
+        total = Item.objects.count()
+
+        call_command("cargar_ai_ml", verbosity=0)
+
+        self.assertEqual(Item.objects.count(), total)
+
+    def test_quitar_deja_solo_el_pdf(self):
+        call_command("cargar_ai_ml", verbosity=0)
+        call_command("cargar_ai_ml", "--quitar", verbosity=0)
+
+        self.assertEqual(Item.objects.count(), 65)
+        self.assertEqual(Etapa.objects.count(), 5)
+
+    def test_quitar_no_toca_los_extras_del_otro_comando(self):
+        call_command("cargar_extras", verbosity=0)
+        extras = Item.objects.filter(generado=True).count()
+
+        call_command("cargar_ai_ml", verbosity=0)
+        call_command("cargar_ai_ml", "--quitar", verbosity=0)
+
+        self.assertEqual(Item.objects.filter(generado=True).count(), extras)
+
+    def test_convive_con_cargar_extras_sin_duplicar(self):
+        call_command("cargar_extras", verbosity=0)
+        call_command("cargar_ai_ml", verbosity=0)
+
+        titulos = list(Item.objects.values_list("etapa_id", "titulo"))
+        self.assertEqual(len(titulos), len(set(titulos)))

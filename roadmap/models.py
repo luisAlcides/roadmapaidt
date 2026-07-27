@@ -55,6 +55,9 @@ class Item(models.Model):
         max_length=80, blank=True, help_text="Platzi, Udemy, autor del libro…"
     )
     detalle = models.TextField(blank=True)
+    url = models.URLField(
+        max_length=500, blank=True, help_text="Enlace directo al curso, libro o recurso."
+    )
     etiqueta = models.CharField(
         max_length=40, blank=True, help_text="Hábitos, Ficción, Foco…"
     )

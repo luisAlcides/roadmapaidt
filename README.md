@@ -36,6 +36,7 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py cargar_roadmap     # carga el contenido del PDF
 python manage.py cargar_extras      # agrega el contenido complementario
+python manage.py cargar_ai_ml       # agrega la ruta especializada de AI/ML
 python manage.py runserver
 ```
 
@@ -46,7 +47,7 @@ arranca y dice cuál. El `.env` lo lee python-dotenv y está en `.gitignore`.
 
 Para entrar al admin: `python manage.py createsuperuser`.
 
-### Los dos comandos de contenido
+### Los tres comandos de contenido
 
 `cargar_roadmap` carga el plan tal como está en el PDF: 5 etapas, 65 items.
 
@@ -58,10 +59,26 @@ la etiqueta **Extra** en la interfaz y con `generado=True` en la base, así que 
 distingue de un vistazo y se borra entero con `cargar_extras --quitar` sin tocar
 lo del PDF ni tu progreso.
 
-Los dos son idempotentes: se pueden correr las veces que sea sin duplicar items
+`cargar_ai_ml` agrega la ruta especializada de **AI/ML Engineer**, con fuentes
+que van más allá de Platzi y Udemy: Stanford (CS229, CS224N, CS231n), MIT 6.S191,
+fast.ai, Neural Networks Zero to Hero de Karpathy, Hugging Face, DeepLearning.AI,
+MLOps Zoomcamp, Full Stack Deep Learning, documentación oficial y papers de arXiv.
+Son cuatro etapas nuevas —deep learning desde los cimientos, MLOps, LLM
+engineering avanzado, y papers/entrevistas— más extras en las etapas 0, 2 y 3.
+Cada item trae su **enlace directo**: los cursos y papers apuntan a la página
+oficial, y los libros a su versión gratuita cuando existe o a Open Library si no.
+Casi todo el material es gratuito; lo que no lo es va marcado. Se borra entero con
+`cargar_ai_ml --quitar` sin tocar lo demás.
+
+Los tres son idempotentes: se pueden correr las veces que sea sin duplicar items
 ni perder lo que ya marcaste (identifican cada item por etapa + título). Solo
 `cargar_roadmap --reset` borra todo y empieza de cero — ahí sí pierdes el
 progreso.
+
+Un detalle entre los dos comandos de extras: `cargar_ai_ml --quitar` borra solo
+lo suyo, pero `cargar_extras --quitar` es más viejo y arrasa con **todo** lo
+marcado `generado=True`, incluida la ruta de AI/ML. Si eso pasa, se recupera
+volviendo a correr `cargar_ai_ml`.
 
 Ojo con la etapa 6: los requisitos de visa y las evaluaciones de credenciales
 cambian seguido. Lo que dice ahí es orientativo; confirma siempre en `canada.ca`
@@ -91,7 +108,7 @@ en el build: durante el build la red privada de Railway todavía no resuelve
 `postgres.railway.internal`. El arranque completo es:
 
 ```
-esperar_db → migrate → cargar_roadmap → cargar_extras → gunicorn
+esperar_db → migrate → cargar_roadmap → cargar_extras → cargar_ai_ml → gunicorn
 ```
 
 Todo eso es idempotente, así que se repite sin daño en cada deploy y la primera
