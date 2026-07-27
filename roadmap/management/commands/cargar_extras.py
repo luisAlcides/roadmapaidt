@@ -22,6 +22,13 @@ EXTRAS_POR_ETAPA = {
     0: [
         (
             C,
+            "Introducción a Docker y Contenedores",
+            "Platzi",
+            "Entender la teoría básica detrás del aislamiento de procesos y sistemas de archivos antes de meterse con docker-compose.",
+            "Docker",
+        ),
+        (
+            C,
             "SQL avanzado: window functions, CTEs y planes de ejecución",
             "Práctica propia",
             "El bootcamp de Portilla llega hasta joins y agregación. Lo que "
@@ -52,6 +59,13 @@ EXTRAS_POR_ETAPA = {
         ),
     ],
     1: [
+        (
+            C,
+            "Arquitectura Medallion en Delta Lake",
+            "Databricks Academy",
+            "Estándar de diseño de almacenamiento estructurado (capas Bronze, Silver y Gold) óptimo para telemetría industrial.",
+            "Delta Lake",
+        ),
         (
             C,
             "Docker Compose y GitHub Actions",
@@ -94,6 +108,13 @@ EXTRAS_POR_ETAPA = {
     2: [
         (
             C,
+            "Procesamiento de Señales para Mantenimiento Predictivo",
+            "Udemy",
+            "Análisis espectral y transformadas rápidas de Fourier (FFT) para interpretar vibraciones de motores y rodamientos.",
+            "Sensores",
+        ),
+        (
+            C,
             "Seguimiento de experimentos con MLflow",
             "Documentación oficial",
             "El curso de MLOps de Platzi lo toca por encima. Si vas a defender un "
@@ -130,9 +151,17 @@ EXTRAS_POR_ETAPA = {
             "con datos en la misma frase. Es la ventaja que ningún data scientist "
             "de bootcamp tiene.",
             "Dominio",
+            True,
         ),
     ],
     3: [
+        (
+            C,
+            "RAG Local con Ollama y Llama 3",
+            "Práctica propia",
+            "Despliegue local y seguro de modelos de lenguaje privado para operaciones remotas mineras sin acceso directo a internet.",
+            "Local AI",
+        ),
         (
             C,
             "pgvector: embeddings dentro de Postgres",
@@ -327,6 +356,76 @@ ETAPAS_NUEVAS = [
                 "",
             ),
         ],
+    },
+    {
+        "orden": 7,
+        "kicker": "Etapa 7 · generada",
+        "titulo": "IoT Industrial y Cloud Data (Edge & Streaming)",
+        "subtitulo": "Sensores en tiempo real",
+        "duracion": "3 meses",
+        "horas": "~60 horas",
+        "color": "#3f7db5",
+        "objetivo": (
+            "Aprender a conectar telemetría en tiempo real desde sensores (SCADA, PLC) "
+            "usando protocolos industriales y procesando el flujo en la nube."
+        ),
+        "items": [
+            (
+                C,
+                "Arquitectura IoT: Ingesta con MQTT y Apache Kafka",
+                "Udemy / Documentación oficial",
+                "Los sensores de los camiones y plantas concentradoras transmiten por "
+                "MQTT o Modbus. Kafka es la espina dorsal para recibir miles de eventos "
+                "por segundo sin saturar tu base de datos.",
+                "Streaming",
+            ),
+            (
+                C,
+                "TimescaleDB: PostgreSQL optimizado para series de tiempo",
+                "Documentación oficial",
+                "La telemetría son series de tiempo (marcas de tiempo + sensor + valor). "
+                "TimescaleDB se instala sobre el Postgres que ya conoces y permite "
+                "hacer consultas analíticas ultra rápidas sobre millones de filas.",
+                "Bases Datos",
+            ),
+            (
+                E,
+                "Pipeline de streaming simulado con Kafka",
+                "",
+                "Un script en Python que simule sensores de temperatura de motor "
+                "publicando en Kafka, procesado en tiempo real para generar alertas "
+                "de sobrecalentamiento instantáneas.",
+                "",
+            ),
+            (
+                C,
+                "AWS o Azure Data Lake: Almacenamiento a escala industrial",
+                "Rutas oficiales cloud",
+                "Aprende a usar S3 (AWS) o ADLS Gen2 (Azure) para guardar los datos "
+                "crudos (raw data) antes de cargarlos al warehouse. Es el estándar de "
+                "la industria minera actual.",
+                "Nube",
+            ),
+            (
+                L,
+                "Designing Cloud Data Platforms",
+                "Danil Zburivsky y Lyuba Hooby",
+                "Libro de referencia sobre cómo diseñar arquitecturas de datos en la "
+                "nube modernas que sean escalables y seguras. Muy valorado en empresas "
+                "multinacionales.",
+                "Arquitect.",
+                True,
+            ),
+            (
+                N,
+                "Edge Computing vs Cloud Computing en minería",
+                "",
+                "En minas a rajo abierto, la conectividad satelital o LTE puede "
+                "caerse. Entender cuándo correr un modelo de predicción dentro del "
+                "mismo camión (Edge) y cuándo mandar los datos a la nube es clave.",
+                "Diseño",
+            )
+        ]
     },
 ]
 

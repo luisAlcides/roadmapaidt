@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
@@ -37,6 +38,8 @@ class VistaTests(TestCase):
     def setUp(self):
         self.etapa = Etapa.objects.create(orden=0, titulo="Nivelación")
         self.item = Item.objects.create(etapa=self.etapa, titulo="Curso de Git")
+        self.user = User.objects.create_user(username="testuser", password="password")
+        self.client.login(username="testuser", password="password")
 
     def test_index_renderiza(self):
         respuesta = self.client.get(reverse("index"))
@@ -119,7 +122,7 @@ class CargarExtrasTests(TestCase):
 
         generados = Item.objects.filter(generado=True)
         self.assertEqual(generados.count(), Item.objects.count() - 65)
-        self.assertEqual(Etapa.objects.count(), 7)
+        self.assertEqual(Etapa.objects.count(), 8)
         # Lo del PDF queda intacto.
         self.assertEqual(Item.objects.filter(generado=False).count(), 65)
 

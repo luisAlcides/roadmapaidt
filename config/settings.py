@@ -147,3 +147,9 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
     # Una hora: conservador a propósito, HSTS es difícil de revertir.
     SECURE_HSTS_SECONDS = 3600
+
+# Rutas de autenticación
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "index"
+LOGOUT_REDIRECT_URL = "login"
+

@@ -2,10 +2,14 @@ from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login as auth_login, logout as auth_logout
+from django.contrib.auth.forms import UserCreationForm
 
 from .models import Etapa, Item
 
 
+@login_required
 def index(request):
     etapas = Etapa.objects.prefetch_related("items")
 
@@ -25,6 +29,7 @@ def index(request):
     return render(request, "roadmap/index.html", contexto)
 
 
+@login_required
 @require_POST
 def alternar_item(request, pk):
     item = get_object_or_404(Item, pk=pk)
@@ -50,6 +55,7 @@ def alternar_item(request, pk):
     return redirect("index")
 
 
+@login_required
 @require_POST
 def crear_item(request, etapa_pk):
     etapa = get_object_or_404(Etapa, pk=etapa_pk)
@@ -68,6 +74,7 @@ def crear_item(request, etapa_pk):
     return redirect(f"/#etapa-{etapa.pk}")
 
 
+@login_required
 @require_POST
 def borrar_item(request, pk):
     item = get_object_or_404(Item, pk=pk)
@@ -76,6 +83,7 @@ def borrar_item(request, pk):
     return redirect(f"/#etapa-{etapa_pk}")
 
 
+@login_required
 @require_POST
 def crear_etapa(request):
     titulo = request.POST.get("titulo", "").strip()
@@ -90,3 +98,22 @@ def crear_etapa(request):
             color=request.POST.get("color") or "#c2703d",
         )
     return redirect("index")
+
+
+def signup(request):
+    if request.user.is_authenticated:
+        return redirect("index")
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            auth_login(request, user)
+            return redirect("index")
+    else:
+        form = UserCreationForm()
+    return render(request, "roadmap/signup.html", {"form": form})
+
+
+def logout_view(request):
+    auth_logout(request)
+    return redirect("login")
