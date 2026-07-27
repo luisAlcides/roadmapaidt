@@ -5,6 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Roadmap · De mantenimiento a ingeniería de datos e IA</title>
 <style>
+  /* Light Theme Variables */
+  body.theme-light {
+    --bg: #faf7f2;
+    --bg-alt: #ffffff;
+    --tinta: #1c2b3a;
+    --tinta-suave: #5a6b7c;
+    --tenue: #8a97a4;
+    --linea: #e4ddd2;
+    --acento: #c2703d;
+    --ok: #4f8a5b;
+    --sombra: 0 1px 2px rgba(28,43,58,.05), 0 8px 24px rgba(28,43,58,.06);
+    --radio: 14px;
+  }
+  
+  /* Dark Theme Variables */
+  body.theme-dark {
+    --bg: #14181d;
+    --bg-alt: #1b2027;
+    --tinta: #e8eaed;
+    --tinta-suave: #a8b3be;
+    --tenue: #6d7883;
+    --linea: #2b323b;
+    --sombra: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    --radio: 14px;
+  }
+
+  /* Default fallback variables before script executes */
   :root {
     --bg: #faf7f2;
     --bg-alt: #ffffff;
@@ -69,7 +96,7 @@
   }
 
   /* ---------- Portada ---------- */
-  .portada { max-width: 960px; margin: 0 auto; padding: 64px 24px 40px; }
+  .portada { max-width: 1200px; margin: 0 auto; padding: 64px 24px 40px; }
   .kicker {
     font-size: 12px; font-weight: 700; letter-spacing: .16em;
     text-transform: uppercase; color: var(--acento); margin-bottom: 14px;
@@ -87,15 +114,43 @@
   .ficha b { display: block; font-size: 22px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
   .ficha span { font-size: 11.5px; color: var(--tenue); text-transform: uppercase; letter-spacing: .07em; }
 
+  /* ---------- Contenedor Layout Dos Columnas ---------- */
+  .contenedor-layout {
+    max-width: 1200px; margin: 0 auto; padding: 0 24px 100px;
+    display: grid; grid-template-columns: 1fr; gap: 36px;
+  }
+  .columna-paralela {
+    position: relative;
+  }
+  .seccion-paralela-tit {
+    font-size: 11px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--tenue); margin-bottom: 16px; display: flex; align-items: center; gap: 6px;
+  }
+  .seccion-paralela-tit span { color: var(--acento); font-size: 14px; }
+
+  /* Ajuste de padding y bordes para tarjetas en paralelo */
+  .nivel.nivel-paralelo { padding-left: 0; padding-bottom: 0; }
+  .nivel.nivel-paralelo::before { display: none !important; }
+  .nivel.nivel-paralelo .nodo { display: none !important; }
+
+  @media (min-width: 900px) {
+    .contenedor-layout {
+      grid-template-columns: 1.6fr 1fr;
+    }
+    .columna-paralela {
+      position: sticky; top: 90px;
+    }
+  }
+
   /* ---------- Mapa de niveles ---------- */
-  .mapa { max-width: 960px; margin: 0 auto; padding: 0 24px 100px; position: relative; }
+  .mapa { max-width: 100%; margin: 0; padding: 0; position: relative; }
   .nivel { position: relative; padding-left: 74px; padding-bottom: 40px; }
   /* Línea que conecta los niveles */
   .nivel::before {
     content: ""; position: absolute; left: 25px; top: 8px; bottom: -8px;
     width: 2px; background: var(--linea); border-radius: 2px;
   }
-  .nivel:last-child::before { bottom: auto; height: 44px; }
+  .nivel.ultimo-nivel::before { bottom: auto; height: 44px; }
   .nivel.hecha::before { background: linear-gradient(180deg, var(--nivel-color), var(--linea)); }
 
   .nodo {
@@ -225,8 +280,9 @@
   .nueva-etapa details.agregar { border: 1px dashed var(--linea); border-radius: var(--radio); }
 
   .pie {
-    max-width: 960px; margin: 0 auto; padding: 0 24px 60px;
+    max-width: 1200px; margin: 0 auto; padding: 0 24px 60px;
     color: var(--tenue); font-size: 13.5px; text-align: center;
+    clear: both;
   }
 
   @media (max-width: 620px) {
@@ -239,6 +295,17 @@
 </style>
 </head>
 <body>
+<script>
+  (function() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.body.classList.add('theme-' + savedTheme);
+    } else {
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.body.classList.add('theme-' + (systemPrefersDark ? 'dark' : 'light'));
+    }
+  })();
+</script>
 
 <header class="barra">
   <div class="barra-int">
@@ -249,6 +316,11 @@
     {% if user.is_authenticated %}
     <div class="barra-usuario" style="font-size: 13.5px; color: var(--tinta-suave); display: flex; align-items: center; gap: 10px; margin-right: 15px;">
       <span>Hola, <b>{{ user.username }}</b></span>
+      
+      <button id="theme-toggle" class="btn-theme" type="button" aria-label="Cambiar tema" style="background: var(--bg-alt); border: 1px solid var(--linea); border-radius: 8px; padding: 4px 8px; cursor: pointer; color: var(--tinta-suave); font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--acento)'; this.style.background='color-mix(in srgb, var(--acento) 8%, transparent)';" onmouseout="this.style.borderColor='var(--linea)'; this.style.background='var(--bg-alt)';">
+        <span id="theme-icon">☀️</span> <span id="theme-text">Claro</span>
+      </button>
+
       <a href="{% url 'logout' %}" style="text-decoration: none; font-weight: 600; font-size: 12px; color: var(--acento); padding: 4px 10px; border: 1px solid var(--linea); border-radius: 8px; background: var(--bg-alt); transition: all 0.2s;" onmouseover="this.style.borderColor='var(--acento)'; this.style.background='color-mix(in srgb, var(--acento) 8%, transparent)';" onmouseout="this.style.borderColor='var(--linea)'; this.style.background='var(--bg-alt)';">Cerrar sesión</a>
     </div>
     {% endif %}
@@ -278,97 +350,179 @@
   </div>
 </section>
 
-<main class="mapa">
-  {% for etapa in etapas %}
-  <section class="nivel {% if etapa.completa %}hecha{% elif etapa.hechos %}activa{% endif %}"
-           id="etapa-{{ etapa.pk }}" data-etapa="{{ etapa.pk }}"
-           style="--nivel-color: {{ etapa.color }}">
+<div class="contenedor-layout">
+  <main class="mapa">
+    {% for etapa in etapas %}
+    {% if etapa.orden != 4 %}
+    <section class="nivel {% if etapa.completa %}hecha{% elif etapa.hechos %}activa{% endif %} {% if forloop.last %}ultimo-nivel{% endif %}"
+             id="etapa-{{ etapa.pk }}" data-etapa="{{ etapa.pk }}"
+             style="--nivel-color: {{ etapa.color }}">
 
-    <div class="nodo">
-      <span class="numero">{{ etapa.orden }}</span>
-      <span class="marca" hidden>✓</span>
-    </div>
-
-    <article class="tarjeta">
-      <div class="tarjeta-cab">
-        {% if etapa.kicker %}<p class="kicker">{{ etapa.kicker }}</p>{% endif %}
-        <h2>{{ etapa.titulo }}</h2>
-        <div class="meta">
-          {% if etapa.duracion %}<span>{{ etapa.duracion }}</span>{% endif %}
-          {% if etapa.horas %}<span>{{ etapa.horas }}</span>{% endif %}
-          {% if etapa.subtitulo %}<span>{{ etapa.subtitulo }}</span>{% endif %}
-        </div>
-        {% if etapa.objetivo %}<p class="objetivo">{{ etapa.objetivo }}</p>{% endif %}
-        <div class="prog-etapa">
-          <div class="medidor"><i class="e-barra" style="width: {{ etapa.porcentaje }}%"></i></div>
-          <b><span class="e-hechos">{{ etapa.hechos }}</span>/<span class="e-total">{{ etapa.total }}</span></b>
-        </div>
+      <div class="nodo">
+        <span class="numero">{{ etapa.orden }}</span>
+        <span class="marca" hidden>✓</span>
       </div>
 
-      {% regroup etapa.items.all by tipo as grupos %}
-      {% for grupo in grupos %}
-        <p class="grupo-tit">{{ grupo.list.0.get_tipo_display|titulo_grupo }}</p>
-        {% for item in grupo.list %}
-        <div class="item {{ item.tipo }} {% if item.completado %}ok{% endif %}" data-item="{{ item.pk }}">
-          <button class="caja" type="button" aria-label="Marcar «{{ item.titulo }}»"
-                  aria-pressed="{{ item.completado|yesno:'true,false' }}">
-            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-          </button>
-          <div class="cuerpo">
-            <div class="titulo">
-              {% if item.etiqueta %}<span class="etiqueta">{{ item.etiqueta }}</span>{% endif %}
-              {{ item.titulo }}
-              {% if item.fuente %}<span class="fuente">— {{ item.fuente }}</span>{% endif %}
-              {% if item.en_ingles %}<span class="etiqueta en">En inglés</span>{% endif %}
-              {% if item.generado %}<span class="etiqueta extra" title="Complemento, no viene del PDF">Extra</span>{% endif %}
-            </div>
-            {% if item.detalle %}<p class="detalle">{{ item.detalle }}</p>{% endif %}
+      <article class="tarjeta">
+        <div class="tarjeta-cab">
+          {% if etapa.kicker %}<p class="kicker">{{ etapa.kicker }}</p>{% endif %}
+          <h2>{{ etapa.titulo }}</h2>
+          <div class="meta">
+            {% if etapa.duracion %}<span>{{ etapa.duracion }}</span>{% endif %}
+            {% if etapa.horas %}<span>{{ etapa.horas }}</span>{% endif %}
+            {% if etapa.subtitulo %}<span>{{ etapa.subtitulo }}</span>{% endif %}
           </div>
-          <form method="post" action="{% url 'borrar_item' item.pk %}"
-                onsubmit="return confirm('¿Borrar «{{ item.titulo|escapejs }}»?')">
-            {% csrf_token %}
-            <button class="borrar" type="submit" aria-label="Borrar item">×</button>
-          </form>
+          {% if etapa.objetivo %}<p class="objetivo">{{ etapa.objetivo }}</p>{% endif %}
+          <div class="prog-etapa">
+            <div class="medidor"><i class="e-barra" style="width: {{ etapa.porcentaje }}%"></i></div>
+            <b><span class="e-hechos">{{ etapa.hechos }}</span>/<span class="e-total">{{ etapa.total }}</span></b>
+          </div>
         </div>
-        {% endfor %}
-      {% endfor %}
 
+        {% regroup etapa.items.all by tipo as grupos %}
+        {% for grupo in grupos %}
+          <p class="grupo-tit">{{ grupo.list.0.get_tipo_display|titulo_grupo }}</p>
+          {% for item in grupo.list %}
+          <div class="item {{ item.tipo }} {% if item.completado %}ok{% endif %}" data-item="{{ item.pk }}">
+            <button class="caja" type="button" aria-label="Marcar «{{ item.titulo }}»"
+                    aria-pressed="{{ item.completado|yesno:'true,false' }}">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+            <div class="cuerpo">
+              <div class="titulo">
+                {% if item.etiqueta %}<span class="etiqueta">{{ item.etiqueta }}</span>{% endif %}
+                {{ item.titulo }}
+                {% if item.fuente %}<span class="fuente">— {{ item.fuente }}</span>{% endif %}
+                {% if item.en_ingles %}<span class="etiqueta en">En inglés</span>{% endif %}
+                {% if item.generado %}<span class="etiqueta extra" title="Complemento, no viene del PDF">Extra</span>{% endif %}
+              </div>
+              {% if item.detalle %}<p class="detalle">{{ item.detalle }}</p>{% endif %}
+            </div>
+            <form method="post" action="{% url 'borrar_item' item.pk %}"
+                  onsubmit="return confirm('¿Borrar «{{ item.titulo|escapejs }}»?')">
+              {% csrf_token %}
+              <button class="borrar" type="submit" aria-label="Borrar item">×</button>
+            </form>
+          </div>
+          {% endfor %}
+        {% endfor %}
+
+        <details class="agregar">
+          <summary>Agregar algo a esta etapa</summary>
+          <form class="nuevo" method="post" action="{% url 'crear_item' etapa.pk %}">
+            {% csrf_token %}
+            <input class="ancho" type="text" name="titulo" placeholder="Título — curso, libro, entregable…" required>
+            <select name="tipo">
+              {% for valor, nombre in tipos %}<option value="{{ valor }}">{{ nombre }}</option>{% endfor %}
+            </select>
+            <input type="text" name="fuente" placeholder="Platzi, Udemy, autor…">
+            <textarea class="ancho" name="detalle" placeholder="Nota o detalle (opcional)"></textarea>
+            <button class="enviar" type="submit">Agregar</button>
+          </form>
+        </details>
+      </article>
+    </section>
+    {% endif %}
+    {% empty %}
+    <p style="color: var(--tinta-suave)">
+      Todavía no hay etapas. Corre <code>python manage.py cargar_roadmap</code> para cargar el plan del PDF.
+    </p>
+    {% endfor %}
+
+    <section class="nueva-etapa">
+      <div class="nodo">+</div>
       <details class="agregar">
-        <summary>Agregar algo a esta etapa</summary>
-        <form class="nuevo" method="post" action="{% url 'crear_item' etapa.pk %}">
+        <summary>Crear una etapa nueva</summary>
+        <form class="nuevo" method="post" action="{% url 'crear_etapa' %}">
           {% csrf_token %}
-          <input class="ancho" type="text" name="titulo" placeholder="Título — curso, libro, entregable…" required>
-          <select name="tipo">
-            {% for valor, nombre in tipos %}<option value="{{ valor }}">{{ nombre }}</option>{% endfor %}
-          </select>
-          <input type="text" name="fuente" placeholder="Platzi, Udemy, autor…">
-          <textarea class="ancho" name="detalle" placeholder="Nota o detalle (opcional)"></textarea>
-          <button class="enviar" type="submit">Agregar</button>
+          <input class="ancho" type="text" name="titulo" placeholder="Nombre de la etapa" required>
+          <input type="text" name="kicker" placeholder="Etiqueta (ej. Etapa 5)">
+          <input type="text" name="duracion" placeholder="Duración (ej. 2 meses)">
+          <textarea class="ancho" name="objetivo" placeholder="Objetivo de la etapa (opcional)"></textarea>
+          <button class="enviar" type="submit">Crear etapa</button>
         </form>
       </details>
-    </article>
-  </section>
-  {% empty %}
-  <p style="color: var(--tinta-suave)">
-    Todavía no hay etapas. Corre <code>python manage.py cargar_roadmap</code> para cargar el plan del PDF.
-  </p>
-  {% endfor %}
+    </section>
+  </main>
 
-  <section class="nueva-etapa">
-    <div class="nodo">+</div>
-    <details class="agregar">
-      <summary>Crear una etapa nueva</summary>
-      <form class="nuevo" method="post" action="{% url 'crear_etapa' %}">
-        {% csrf_token %}
-        <input class="ancho" type="text" name="titulo" placeholder="Nombre de la etapa" required>
-        <input type="text" name="kicker" placeholder="Etiqueta (ej. Etapa 5)">
-        <input type="text" name="duracion" placeholder="Duración (ej. 2 meses)">
-        <textarea class="ancho" name="objetivo" placeholder="Objetivo de la etapa (opcional)"></textarea>
-        <button class="enviar" type="submit">Crear etapa</button>
-      </form>
-    </details>
-  </section>
-</main>
+  <aside class="columna-paralela">
+    {% for etapa in etapas %}
+    {% if etapa.orden == 4 %}
+    <div class="seccion-paralela-tit">
+      <span>✦</span> En paralelo · Toda la ruta
+    </div>
+    <div class="nivel nivel-paralelo {% if etapa.completa %}hecha{% elif etapa.hechos %}activa{% endif %}"
+         id="etapa-{{ etapa.pk }}" data-etapa="{{ etapa.pk }}"
+         style="--nivel-color: {{ etapa.color }}">
+      
+      <div class="nodo" style="display: none;">
+        <span class="numero">{{ etapa.orden }}</span>
+        <span class="marca" hidden>✓</span>
+      </div>
+
+      <article class="tarjeta">
+        <div class="tarjeta-cab">
+          {% if etapa.kicker %}<p class="kicker">{{ etapa.kicker }}</p>{% endif %}
+          <h2>{{ etapa.titulo }}</h2>
+          <div class="meta">
+            {% if etapa.duracion %}<span>{{ etapa.duracion }}</span>{% endif %}
+            {% if etapa.horas %}<span>{{ etapa.horas }}</span>{% endif %}
+            {% if etapa.subtitulo %}<span>{{ etapa.subtitulo }}</span>{% endif %}
+          </div>
+          {% if etapa.objetivo %}<p class="objetivo">{{ etapa.objetivo }}</p>{% endif %}
+          <div class="prog-etapa">
+            <div class="medidor"><i class="e-barra" style="width: {{ etapa.porcentaje }}%"></i></div>
+            <b><span class="e-hechos">{{ etapa.hechos }}</span>/<span class="e-total">{{ etapa.total }}</span></b>
+          </div>
+        </div>
+
+        {% regroup etapa.items.all by tipo as grupos %}
+        {% for grupo in grupos %}
+          <p class="grupo-tit">{{ grupo.list.0.get_tipo_display|titulo_grupo }}</p>
+          {% for item in grupo.list %}
+          <div class="item {{ item.tipo }} {% if item.completado %}ok{% endif %}" data-item="{{ item.pk }}">
+            <button class="caja" type="button" aria-label="Marcar «{{ item.titulo }}»"
+                    aria-pressed="{{ item.completado|yesno:'true,false' }}">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+            <div class="cuerpo">
+              <div class="titulo">
+                {% if item.etiqueta %}<span class="etiqueta">{{ item.etiqueta }}</span>{% endif %}
+                {{ item.titulo }}
+                {% if item.fuente %}<span class="fuente">— {{ item.fuente }}</span>{% endif %}
+                {% if item.en_ingles %}<span class="etiqueta en">En inglés</span>{% endif %}
+                {% if item.generado %}<span class="etiqueta extra" title="Complemento, no viene del PDF">Extra</span>{% endif %}
+              </div>
+              {% if item.detalle %}<p class="detalle">{{ item.detalle }}</p>{% endif %}
+            </div>
+            <form method="post" action="{% url 'borrar_item' item.pk %}"
+                  onsubmit="return confirm('¿Borrar «{{ item.titulo|escapejs }}»?')">
+              {% csrf_token %}
+              <button class="borrar" type="submit" aria-label="Borrar item">×</button>
+            </form>
+          </div>
+          {% endfor %}
+        {% endfor %}
+
+        <details class="agregar">
+          <summary>Agregar algo a esta etapa</summary>
+          <form class="nuevo" method="post" action="{% url 'crear_item' etapa.pk %}">
+            {% csrf_token %}
+            <input class="ancho" type="text" name="titulo" placeholder="Título — curso, libro, entregable…" required>
+            <select name="tipo">
+              {% for valor, nombre in tipos %}<option value="{{ valor }}">{{ nombre }}</option>{% endfor %}
+            </select>
+            <input type="text" name="fuente" placeholder="Platzi, Udemy, autor…">
+            <textarea class="ancho" name="detalle" placeholder="Nota o detalle (opcional)"></textarea>
+            <button class="enviar" type="submit">Agregar</button>
+          </form>
+        </details>
+      </article>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </aside>
+</div>
 
 <p class="pie">
   Veinte libros en quince meses son menos de uno y medio al mes.<br>
@@ -401,8 +555,13 @@ document.querySelectorAll('.caja').forEach(caja => {
       nivel.querySelector('.e-hechos').textContent = d.etapa_hechos;
       nivel.classList.toggle('hecha', d.etapa_completa);
       nivel.classList.toggle('activa', !d.etapa_completa && d.etapa_hechos > 0);
-      nivel.querySelector('.numero').hidden = d.etapa_completa;
-      nivel.querySelector('.marca').hidden = !d.etapa_completa;
+      
+      const numero = nivel.querySelector('.numero');
+      const marca = nivel.querySelector('.marca');
+      if (numero && marca) {
+        numero.hidden = d.etapa_completa;
+        marca.hidden = !d.etapa_completa;
+      }
 
       document.getElementById('g-hechos').textContent = d.global_hechos;
       document.getElementById('g-pct').textContent = d.global_porcentaje + ' %';
@@ -416,9 +575,45 @@ document.querySelectorAll('.caja').forEach(caja => {
 
 // Estado inicial del ✓ en los nodos ya completos.
 document.querySelectorAll('.nivel.hecha').forEach(n => {
-  n.querySelector('.numero').hidden = true;
-  n.querySelector('.marca').hidden = false;
+  const numero = n.querySelector('.numero');
+  const marca = n.querySelector('.marca');
+  if (numero && marca) {
+    numero.hidden = true;
+    marca.hidden = false;
+  }
 });
+
+// Script del Interruptor de Temas (Theme Switcher)
+const themeToggle = document.getElementById('theme-toggle');
+const themeIcon = document.getElementById('theme-icon');
+const themeText = document.getElementById('theme-text');
+
+function applyTheme(theme) {
+  if (theme === 'dark') {
+    document.body.classList.add('theme-dark');
+    document.body.classList.remove('theme-light');
+    if (themeIcon) themeIcon.textContent = '🌙';
+    if (themeText) themeText.textContent = 'Oscuro';
+  } else {
+    document.body.classList.add('theme-light');
+    document.body.classList.remove('theme-dark');
+    if (themeIcon) themeIcon.textContent = '☀️';
+    if (themeText) themeText.textContent = 'Claro';
+  }
+}
+
+// Iniciar estado del botón de tema
+const currentTheme = document.body.classList.contains('theme-dark') ? 'dark' : 'light';
+applyTheme(currentTheme);
+
+if (themeToggle) {
+  themeToggle.addEventListener('click', () => {
+    const isDark = document.body.classList.contains('theme-dark');
+    const newTheme = isDark ? 'light' : 'dark';
+    localStorage.setItem('theme', newTheme);
+    applyTheme(newTheme);
+  });
+}
 </script>
 </body>
 </html>

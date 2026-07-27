@@ -68,6 +68,20 @@ EXTRAS_POR_ETAPA = {
         ),
         (
             C,
+            "Fundamentos de Lakehouse con Apache Iceberg",
+            "Udemy",
+            "Apache Iceberg como alternativa moderna a Delta Lake para optimizar el rendimiento de consultas analíticas a gran escala.",
+            "Iceberg",
+        ),
+        (
+            C,
+            "Orquestación Moderna: Prefect y Dagster",
+            "Documentación oficial",
+            "Alternativas contemporáneas a Airflow enfocadas en tipado de datos y desarrollo local rápido.",
+            "Orquestadores",
+        ),
+        (
+            C,
             "Docker Compose y GitHub Actions",
             "Documentación oficial",
             "Docker solo no alcanza: tu pipeline va a ser Airflow + Postgres + "
@@ -115,6 +129,20 @@ EXTRAS_POR_ETAPA = {
         ),
         (
             C,
+            "Modelos de Supervivencia para Confiabilidad",
+            "Udemy",
+            "Uso de curvas de Kaplan-Meier y modelos de Cox para estimar el tiempo restante hasta la falla (RUL) de un equipo industrial.",
+            "Mantenimiento",
+        ),
+        (
+            C,
+            "Kubeflow para ML Pipelines Industriales",
+            "Udemy",
+            "Diseño y orquestación de flujos de trabajo de Machine Learning robustos sobre Kubernetes.",
+            "MLOps",
+        ),
+        (
+            C,
             "Seguimiento de experimentos con MLflow",
             "Documentación oficial",
             "El curso de MLOps de Platzi lo toca por encima. Si vas a defender un "
@@ -128,7 +156,7 @@ EXTRAS_POR_ETAPA = {
             "",
             "El error más común en mantenimiento predictivo: hacer train/test "
             "aleatorio sobre datos temporales. Filtras el futuro al pasado y el "
-            "modelo se ve perfecto hasta que llega a producción. Corta siempre "
+            "modelo se ver perfecto hasta que llega a producción. Corta siempre "
             "por fecha.",
             "Ojo",
         ),
@@ -161,6 +189,20 @@ EXTRAS_POR_ETAPA = {
             "Práctica propia",
             "Despliegue local y seguro de modelos de lenguaje privado para operaciones remotas mineras sin acceso directo a internet.",
             "Local AI",
+        ),
+        (
+            C,
+            "Inferencia de LLMs Optimizada: vLLM y Hugging Face TGI",
+            "Práctica propia",
+            "Uso de motores de inferencia optimizados para servir LLMs open-source de forma veloz y rentable.",
+            "Inferencia",
+        ),
+        (
+            C,
+            "Agentes Autónomos con CrewAI y AutoGen",
+            "Udemy",
+            "Orquestación de múltiples agentes trabajando coordinados para resolver tareas de diagnóstico complejas.",
+            "Agentes",
         ),
         (
             C,
@@ -381,12 +423,26 @@ ETAPAS_NUEVAS = [
             ),
             (
                 C,
+                "Procesamiento de Flujos en Tiempo Real con Apache Flink",
+                "Udemy",
+                "Ingesta y análisis de eventos de telemetría en streaming con ventanas de tiempo avanzadas y joins complejos.",
+                "Flink",
+            ),
+            (
+                C,
                 "TimescaleDB: PostgreSQL optimizado para series de tiempo",
                 "Documentación oficial",
                 "La telemetría son series de tiempo (marcas de tiempo + sensor + valor). "
                 "TimescaleDB se instala sobre el Postgres que ya conoces y permite "
                 "hacer consultas analíticas ultra rápidas sobre millones de filas.",
                 "Bases Datos",
+            ),
+            (
+                C,
+                "Monitoreo Industrial con Grafana y Prometheus",
+                "Documentación oficial",
+                "Creación de tableros de control en tiempo real para visualizar series de tiempo de sensores e infraestructura de datos.",
+                "Grafana",
             ),
             (
                 E,
